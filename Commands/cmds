@@ -1,0 +1,18 @@
+sudo chmod 666 /dev/ttyUSB0
+
+usermod -a -G dialout yourusername"
+
+rosrun rosserial_python serial_node.py /dev/ttyUSB0
+
+source devel/setup.bash
+
+deleted the roslib and run:
+ rosrun rosserial_arduino make_libraries.py /home/rudra/ProgramFiles/arduino-1.8.13/libraries
+ 
+ catkin_make clean
+ catkin_make
+
+ upload code now (must)
+
+ source devel/setup.bash
+
