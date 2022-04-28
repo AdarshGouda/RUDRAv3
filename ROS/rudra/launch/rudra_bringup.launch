@@ -1,0 +1,28 @@
+<launch>
+	<param name ="/use_sim_time" value="false"/>		
+
+	<arg name="gui" default="True" />
+	<param name="use_gui" value="$(arg gui)"/>
+	<param name="robot_description" command="cat $(find rudra_description)/urdf/rudra.urdf" />
+	
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+	
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+	
+	<node pkg="rosserial_python" type="serial_node.py" name="Uno" output="screen">
+<param name="port" value="/dev/ttyACM0"/>
+<param name="baud" value="57600"/>
+</node>
+
+<node pkg="rosserial_python" type="serial_node.py" name="Teensy" output="screen">
+<param name="port" value="/dev/ttyACM1"/>
+<param name="baud" value="57600"/>
+</node>
+
+	<node name="imu_filter_node_for_orientation" pkg="imu_complementary_filter" type="complementary_filter_node" >
+  	</node>
+		
+	<!--include file="$(find rplidar_ros)/launch/rplidar.launch" /-->
+	
+</launch>
