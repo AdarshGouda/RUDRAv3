@@ -1,0 +1,28 @@
+# ROS2 / colcon generated folders
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# ROS bags and logs
+*.bag
+*.db3
+*.mcap
+rosbag2_*/
+*.log
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
