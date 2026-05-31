@@ -1,0 +1,1189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RUDRA NUC ROS 2 Lyrical Setup Guide</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #5f6b7c;
+      --paper: #f7f8fb;
+      --panel: #ffffff;
+      --line: #d8deea;
+      --brand: #b3261e;
+      --brand-dark: #80180f;
+      --accent: #0b6b86;
+      --accent-soft: #e3f3f7;
+      --warn: #8a5a00;
+      --warn-soft: #fff4d6;
+      --ok: #137333;
+      --ok-soft: #e4f4e9;
+      --code: #111827;
+      --code-bg: #eef2f7;
+      --shadow: 0 12px 30px rgba(25, 36, 61, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.58;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    code, pre, kbd {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #fff 0%, #f1f5f9 46%, #eaf5f8 100%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 52px 24px 38px;
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 28px;
+      align-items: end;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--brand);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 4.6vw, 4.8rem);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 820px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 1.12rem;
+    }
+
+    .hero-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .hero-card h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .hero-card ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    .layout {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 26px 24px 56px;
+      display: grid;
+      grid-template-columns: 255px minmax(0, 1fr);
+      gap: 28px;
+    }
+
+    nav {
+      position: sticky;
+      top: 16px;
+      align-self: start;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+    }
+
+    nav h2 {
+      margin: 0 0 10px;
+      font-size: 0.92rem;
+    }
+
+    nav a {
+      display: block;
+      padding: 7px 0;
+      color: var(--ink);
+      font-size: 0.92rem;
+      text-decoration: none;
+      border-bottom: 1px solid #edf1f6;
+    }
+
+    nav a:hover {
+      color: var(--brand);
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 26px;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.65rem;
+      line-height: 1.15;
+    }
+
+    h3 {
+      margin: 24px 0 8px;
+      font-size: 1.1rem;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    ul, ol {
+      margin-top: 0;
+      padding-left: 22px;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .tile {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcfe;
+    }
+
+    .tile strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: var(--accent-soft);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 16px 0;
+    }
+
+    .callout.warn {
+      border-left-color: var(--warn);
+      background: var(--warn-soft);
+    }
+
+    .callout.ok {
+      border-left-color: var(--ok);
+      background: var(--ok-soft);
+    }
+
+    .label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      padding: 3px 9px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+      background: #fff;
+      margin: 0 6px 6px 0;
+    }
+
+    pre {
+      margin: 14px 0 18px;
+      padding: 16px;
+      overflow: auto;
+      background: var(--code-bg);
+      color: var(--code);
+      border: 1px solid #cfd8e6;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    code {
+      background: #eef2f7;
+      padding: 0.12rem 0.28rem;
+      border-radius: 4px;
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 20px;
+      font-size: 0.94rem;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .footer {
+      color: var(--muted);
+      text-align: center;
+      padding: 16px 0 0;
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero-inner, .layout {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        position: static;
+        max-height: none;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <p class="eyebrow">RUDRA robot bring-up</p>
+        <h1>NUC Setup for Ubuntu 26.04 + ROS 2 Lyrical</h1>
+        <p class="subtitle">
+          A fresh-install guide for turning a bare Intel NUC into the RUDRA ROS 2 onboard computer:
+          OS tools, Python, ROS 2, workspace build, shell environment, Teensy access, serial tooling,
+          SSH, and first heartbeat validation.
+        </p>
+      </div>
+      <aside class="hero-card" aria-label="Quick summary">
+        <h2>Outcome</h2>
+        <ul>
+          <li>Host name: <code>rudra</code></li>
+          <li>ROS distro: <code>lyrical</code></li>
+          <li>Workspace: <code>~/Projects/RUDRA/RUDRAv3/ros2_ws</code></li>
+          <li>Smoke test: <code>ros2 run rudra_core rudra_alive</code></li>
+        </ul>
+      </aside>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="Table of contents">
+      <h2>Setup Path</h2>
+      <a href="#intent">1. What This Replaces</a>
+      <a href="#assumptions">2. Assumptions</a>
+      <a href="#install-ubuntu">3. Install Ubuntu</a>
+      <a href="#bootstrap">4. Bootstrap Linux Tools</a>
+      <a href="#ros2">5. Install ROS 2 Lyrical</a>
+      <a href="#workspace">6. Get RUDRA Workspace</a>
+      <a href="#environment">7. Shell Environment</a>
+      <a href="#build">8. Build and Test</a>
+      <a href="#serial">9. Teensy and Serial</a>
+      <a href="#hardware-deep-dive">10. IMU, Motors, PS2</a>
+      <a href="#ssh">11. SSH and Networking</a>
+      <a href="#optional-services">12. Optional Services</a>
+      <a href="#troubleshooting">13. Troubleshooting</a>
+      <a href="#references">14. References</a>
+    </nav>
+
+    <main>
+      <section id="intent">
+        <h2>1. What This Replaces</h2>
+        <p>
+          The original RUDRA NUC reference was written for Ubuntu 20.04 and ROS 1 Noetic. Its broad
+          intent is still useful: install developer tools, Arduino/Teensy support, serial access,
+          SSH, and the robot workspace. The implementation changes for ROS 2:
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Old ROS 1 idea</th>
+              <th>ROS 2 Lyrical version for RUDRA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>ros-noetic-desktop-full</code></td>
+              <td><code>ros-lyrical-desktop</code> or <code>ros-lyrical-ros-base</code></td>
+            </tr>
+            <tr>
+              <td><code>catkin</code>, <code>catkin_tools</code></td>
+              <td><code>ament</code> packages built with <code>colcon</code></td>
+            </tr>
+            <tr>
+              <td><code>rosrun</code>, <code>roslaunch</code></td>
+              <td><code>ros2 run</code>, <code>ros2 launch</code></td>
+            </tr>
+            <tr>
+              <td><code>rosserial_arduino</code></td>
+              <td>Plain serial nodes, <code>swri_serial_util</code>, or micro-ROS for MCU-native ROS 2</td>
+            </tr>
+            <tr>
+              <td><code>devel/setup.bash</code></td>
+              <td><code>install/setup.bash</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <strong>Important:</strong> <code>rosserial_arduino</code> was not carried forward as the normal ROS 2 path.
+          For Teensy/Arduino in a ROS 2 robot, decide whether the microcontroller should speak ROS 2 itself
+          through micro-ROS, or whether the NUC should read/write a custom serial protocol and publish ROS 2 topics.
+        </div>
+      </section>
+
+      <section id="assumptions">
+        <h2>2. Assumptions</h2>
+        <div>
+          <span class="label">Fresh Ubuntu 26.04</span>
+          <span class="label">User: rudra</span>
+          <span class="label">Host: rudra</span>
+          <span class="label">ROS_DOMAIN_ID=42</span>
+          <span class="label">Bash shell</span>
+        </div>
+
+        <p>
+          This guide assumes the NUC starts from a clean Ubuntu 26.04 install with no ROS workspace,
+          no Python development packages, no serial libraries, and no Arduino/Teensy permissions.
+          Ubuntu usually includes a Python interpreter, but do not rely on a fresh install having
+          <code>pip</code>, <code>venv</code>, headers, build tools, or ROS tooling.
+        </p>
+
+        <h3>Recommended disk layout</h3>
+        <pre><code>/home/rudra/
+  Projects/
+    RUDRA/
+      RUDRAv3/
+        ros2_ws/
+          src/
+          docs/
+          build/     # generated
+          install/   # generated
+          log/       # generated</code></pre>
+
+        <h3>Robot network names</h3>
+        <ul>
+          <li><code>rudra</code>: robot NUC, onboard computer.</li>
+          <li><code>aghora</code>: development/control laptop.</li>
+          <li><code>rudra.local</code>: mDNS name after <code>avahi-daemon</code> is enabled.</li>
+        </ul>
+      </section>
+
+      <section id="install-ubuntu">
+        <h2>3. Install Ubuntu 26.04 on the NUC</h2>
+        <ol>
+          <li>Install Ubuntu 26.04 Desktop or Server. Desktop is easier when using RViz, Arduino IDE, and VS Code locally.</li>
+          <li>Create the user <code>rudra</code>.</li>
+          <li>Set the computer name to <code>rudra</code>.</li>
+          <li>Connect to a reliable network before installing ROS packages.</li>
+          <li>After first boot, open a terminal and run the bootstrap commands below.</li>
+        </ol>
+
+        <h3>Set host name if needed</h3>
+        <pre><code>sudo hostnamectl set-hostname rudra
+hostnamectl
+cat /etc/hostname</code></pre>
+
+        <h3>Enable update repositories</h3>
+        <pre><code>sudo apt update
+sudo apt upgrade -y
+sudo apt install -y software-properties-common
+sudo add-apt-repository universe</code></pre>
+
+        <div class="callout warn">
+          Reboot after large system upgrades, especially on a brand-new machine. It prevents driver,
+          kernel, and library mismatch problems later in the setup.
+        </div>
+      </section>
+
+      <section id="bootstrap">
+        <h2>4. Bootstrap Linux Tools</h2>
+        <p>
+          Install the base system tools explicitly. This section is intentionally broad because the
+          starting point is a clean OS with no development stack assumed.
+        </p>
+
+        <pre><code>sudo apt update
+sudo apt install -y \
+  build-essential cmake pkg-config \
+  git curl wget gnupg ca-certificates lsb-release \
+  locales software-properties-common \
+  python3 python3-dev python3-pip python3-venv python3-setuptools python3-wheel \
+  usbutils pciutils net-tools iproute2 \
+  udev openssh-server avahi-daemon \
+  terminator</code></pre>
+
+        <h3>Locale</h3>
+        <p>ROS 2 expects a UTF-8 capable locale. Configure it before adding ROS repositories.</p>
+        <pre><code>locale
+sudo locale-gen en_US en_US.UTF-8
+sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+locale</code></pre>
+
+        <h3>Python sanity check</h3>
+        <pre><code>python3 --version
+python3 -m pip --version
+python3 -m venv /tmp/rudra_venv_check
+rm -rf /tmp/rudra_venv_check</code></pre>
+
+        <h3>Optional editor</h3>
+        <p>
+          For VS Code, Microsoft documents both Debian package and Snap installation paths. The
+          quick path is:
+        </p>
+        <pre><code>sudo snap install --classic code</code></pre>
+      </section>
+
+      <section id="ros2">
+        <h2>5. Install ROS 2 Lyrical</h2>
+        <p>
+          ROS 2 Lyrical provides binary Debian packages for Ubuntu 26.04. For the robot NUC,
+          <code>ros-lyrical-desktop</code> is convenient because it includes RViz and demos. If the NUC
+          must stay lean, use <code>ros-lyrical-ros-base</code> and install visualization tools on the laptop.
+        </p>
+
+        <h3>Add the official ROS 2 apt source</h3>
+        <pre><code>sudo apt update
+sudo apt install -y curl
+export ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F'"' '{print $4}')
+curl -L -o /tmp/ros2-apt-source.deb \
+  "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo ${UBUNTU_CODENAME:-${VERSION_CODENAME}})_all.deb"
+sudo dpkg -i /tmp/ros2-apt-source.deb</code></pre>
+
+        <h3>Install ROS 2 and development tools</h3>
+        <pre><code>sudo apt update
+sudo apt upgrade -y
+sudo apt install -y \
+  ros-lyrical-desktop \
+  ros-dev-tools \
+  python3-colcon-common-extensions \
+  python3-rosdep \
+  python3-vcstool</code></pre>
+
+        <h3>Install RUDRA-useful ROS packages</h3>
+        <pre><code>sudo apt install -y \
+  ros-lyrical-rmw-fastrtps-cpp \
+  ros-lyrical-rmw-cyclonedds-cpp \
+  ros-lyrical-robot-state-publisher \
+  ros-lyrical-joint-state-publisher-gui \
+  ros-lyrical-xacro \
+  ros-lyrical-tf2-tools \
+  ros-lyrical-teleop-twist-keyboard \
+  ros-lyrical-teleop-twist-joy \
+  ros-lyrical-joy \
+  ros-lyrical-joy-linux \
+  ros-lyrical-imu-tools \
+  ros-lyrical-imu-filter-madgwick \
+  ros-lyrical-imu-complementary-filter \
+  ros-lyrical-rviz-imu-plugin \
+  ros-lyrical-robot-localization \
+  ros-lyrical-swri-serial-util \
+  libcxx-serial-dev \
+  libserialport-dev \
+  python3-serial</code></pre>
+
+        <h3>Initialize rosdep</h3>
+        <pre><code>sudo rosdep init || true
+rosdep update</code></pre>
+
+        <h3>Verify ROS itself</h3>
+        <pre><code>source /opt/ros/lyrical/setup.bash
+ros2 --version
+ros2 doctor --report</code></pre>
+
+        <div class="callout ok">
+          A good first win: open two terminals, source ROS in both, run
+          <code>ros2 run demo_nodes_cpp talker</code> in one and
+          <code>ros2 run demo_nodes_py listener</code> in the other.
+        </div>
+      </section>
+
+      <section id="workspace">
+        <h2>6. Get the RUDRA Workspace</h2>
+        <p>
+          The current RUDRAv3 repo uses a ROS 2 workspace under <code>ros2_ws</code>. Clone it into
+          the expected location so scripts and shell aliases stay simple.
+        </p>
+
+        <h3>Create project folders</h3>
+        <pre><code>mkdir -p ~/Projects/RUDRA
+cd ~/Projects/RUDRA</code></pre>
+
+        <h3>Clone the repo</h3>
+        <pre><code># Preferred if your GitHub SSH key is configured:
+git clone git@github.com:AdarshGouda/RUDRAv3.git
+
+# HTTPS fallback:
+# git clone https://github.com/AdarshGouda/RUDRAv3.git
+
+cd ~/Projects/RUDRA/RUDRAv3/ros2_ws</code></pre>
+
+        <h3>Expected package</h3>
+        <p>The first ROS 2 package in this workspace is <code>rudra_core</code>, an <code>ament_python</code> package.</p>
+        <pre><code>ros2_ws/src/rudra_core/
+  package.xml
+  setup.py
+  rudra_core/
+    rudra_alive.py</code></pre>
+      </section>
+
+      <section id="environment">
+        <h2>7. Shell Environment</h2>
+        <p>
+          Every terminal should source ROS 2 first, then the RUDRA overlay workspace. Add this block
+          at the bottom of <code>~/.bashrc</code>.
+        </p>
+
+        <pre><code># RUDRA ROS 2 environment
+export RUDRA_WS="$HOME/Projects/RUDRA/RUDRAv3/ros2_ws"
+
+if [ -f /opt/ros/lyrical/setup.bash ]; then
+    source /opt/ros/lyrical/setup.bash
+fi
+
+if [ -f "$RUDRA_WS/install/setup.bash" ]; then
+    source "$RUDRA_WS/install/setup.bash"
+fi
+
+export ROS_DOMAIN_ID=42
+export ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+
+# RUDRA workspace helpers
+alias gs="git status"
+alias cw="cd $RUDRA_WS"
+alias cs="cd $RUDRA_WS/src"
+alias cb="cd $RUDRA_WS && colcon build --symlink-install"
+alias ports="ls /dev/ttyUSB* /dev/ttyACM* 2&gt;/dev/null"
+alias serialids="ls -l /dev/serial/by-id 2&gt;/dev/null"
+alias usbwatch="dmesg -w"
+alias rudra_ws="cd $RUDRA_WS"
+alias rudra_src="cd $RUDRA_WS/src"
+alias rosenv="printenv | grep -E 'ROS|RMW|RUDRA'"</code></pre>
+
+        <h3>Load it now</h3>
+        <pre><code>source ~/.bashrc
+rosenv</code></pre>
+
+        <h3>Expected environment values</h3>
+        <pre><code>ROS_DISTRO=lyrical
+ROS_DOMAIN_ID=42
+RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+RUDRA_WS=/home/rudra/Projects/RUDRA/RUDRAv3/ros2_ws</code></pre>
+      </section>
+
+      <section id="build">
+        <h2>8. Build and Test the RUDRA Workspace</h2>
+        <p>
+          Use <code>rosdep</code> before every first build on a fresh machine. It reads each package's
+          <code>package.xml</code> and asks apt to install the missing system dependencies.
+        </p>
+
+        <pre><code>cd ~/Projects/RUDRA/RUDRAv3/ros2_ws
+source /opt/ros/lyrical/setup.bash
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --symlink-install
+source install/setup.bash</code></pre>
+
+        <h3>Run the RUDRA heartbeat node</h3>
+        <pre><code>ros2 run rudra_core rudra_alive</code></pre>
+
+        <p>In another terminal:</p>
+        <pre><code>source ~/.bashrc
+ros2 topic list
+ros2 topic echo /rudra/heartbeat</code></pre>
+
+        <h3>Run tests</h3>
+        <pre><code>cd ~/Projects/RUDRA/RUDRAv3/ros2_ws
+colcon test --event-handlers console_direct+
+colcon test-result --verbose</code></pre>
+
+        <div class="callout ok">
+          When <code>/rudra/heartbeat</code> increments once per second, the NUC has ROS 2, Python,
+          the workspace overlay, and the <code>rudra_core</code> entry point working together.
+        </div>
+      </section>
+
+      <section id="serial">
+        <h2>9. Teensy and Serial Setup</h2>
+        <p>
+          RUDRA hardware talks to the NUC through USB serial devices such as Teensy or Arduino-class
+          controllers. A fresh Linux install needs udev rules and user group membership before
+          non-root processes can open those devices reliably.
+        </p>
+
+        <h3>User groups</h3>
+        <pre><code>sudo usermod -aG dialout,plugdev rudra
+groups rudra</code></pre>
+        <p>Log out and back in after changing groups.</p>
+
+        <h3>Install Teensy udev rules</h3>
+        <p>
+          Use the official PJRC rules file when possible. This repository also has a local
+          <code>00-teensy.rules</code> file at the repo root if you want a pinned copy.
+        </p>
+        <pre><code># Official live copy:
+curl -L -o /tmp/00-teensy.rules https://www.pjrc.com/teensy/00-teensy.rules
+sudo install -m 0644 /tmp/00-teensy.rules /etc/udev/rules.d/00-teensy.rules
+
+# Repo-pinned copy, if present:
+# sudo install -m 0644 ~/Projects/RUDRA/RUDRAv3/00-teensy.rules /etc/udev/rules.d/00-teensy.rules
+
+sudo udevadm control --reload-rules
+sudo udevadm trigger</code></pre>
+
+        <p>Unplug and reconnect the Teensy after installing the rule.</p>
+
+        <h3>Install Arduino CLI</h3>
+        <pre><code>sudo apt install -y arduino-cli
+arduino-cli version
+arduino-cli config init</code></pre>
+
+        <h3>Add Teensy board support to Arduino tooling</h3>
+        <pre><code>arduino-cli config add board_manager.additional_urls https://www.pjrc.com/teensy/package_teensy_index.json
+arduino-cli core update-index
+arduino-cli core search teensy</code></pre>
+
+        <h3>Identify serial devices</h3>
+        <pre><code>lsusb
+ls /dev/ttyUSB* /dev/ttyACM* 2&gt;/dev/null
+ls -l /dev/serial/by-id 2&gt;/dev/null
+dmesg -w</code></pre>
+
+        <h3>ROS 2 serial options</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Option</th>
+              <th>Use when</th>
+              <th>NUC-side packages</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Plain serial bridge node</td>
+              <td>The microcontroller sends simple packets, CSV, binary frames, or line-delimited data.</td>
+              <td><code>pyserial</code>, <code>libserialport-dev</code>, or <code>libcxx-serial-dev</code></td>
+            </tr>
+            <tr>
+              <td><code>swri_serial_util</code></td>
+              <td>You want ROS 2 utilities around serial communication.</td>
+              <td><code>ros-lyrical-swri-serial-util</code></td>
+            </tr>
+            <tr>
+              <td>micro-ROS</td>
+              <td>The Teensy/MCU should participate in ROS 2 using rclc-style APIs.</td>
+              <td><code>ros-lyrical-rclc</code>, micro-ROS Arduino library, micro-ROS agent if available for the platform.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout warn">
+          Do not copy ROS 1 <code>rosrun rosserial_arduino make_libraries.py</code> commands into this
+          ROS 2 setup. They belong to the Noetic workflow and create ROS 1 Arduino libraries.
+        </div>
+      </section>
+
+      <section id="hardware-deep-dive">
+        <h2>10. ROS 2 Deep Dive: IMU, Sabertooth, MPU6050, and PS2 Control</h2>
+        <p>
+          The old RUDRA checklist items 9-12 are still important, but each lands in a different
+          place in a ROS 2 robot. The NUC should own ROS 2 topics, transforms, logging, safety
+          gates, and state estimation. The Arduino or Teensy should own tight hardware timing:
+          I2C sensor reads, PS2 receiver polling, PWM/serial timing, and watchdog behavior.
+        </p>
+
+        <div class="grid">
+          <div class="tile">
+            <strong>NUC responsibility</strong>
+            ROS 2 nodes, <code>sensor_msgs/Imu</code>, <code>sensor_msgs/Joy</code>, <code>cmd_vel</code>,
+            odometry fusion, launch files, parameters, logs, and operator visibility.
+          </div>
+          <div class="tile">
+            <strong>Microcontroller responsibility</strong>
+            MPU6050 I2C sampling, PS2 controller polling, Sabertooth serial writes, encoder timing,
+            local failsafe, and a compact serial protocol to the NUC.
+          </div>
+        </div>
+
+        <h3>9. ROS IMU tools in ROS 2</h3>
+        <p>
+          The ROS 1 <code>imu_tools</code> stack exists in ROS 2 and is released for Lyrical. It contains
+          <code>imu_filter_madgwick</code>, <code>imu_complementary_filter</code>, and <code>rviz_imu_plugin</code>.
+          The filters take raw angular velocity and linear acceleration, optionally magnetometer data,
+          and produce an orientation quaternion.
+        </p>
+
+        <pre><code>sudo apt install -y \
+  ros-lyrical-imu-tools \
+  ros-lyrical-imu-filter-madgwick \
+  ros-lyrical-imu-complementary-filter \
+  ros-lyrical-rviz-imu-plugin \
+  ros-lyrical-robot-localization</code></pre>
+
+        <p>
+          Recommended topic contract for RUDRA:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Topic</th>
+              <th>Type</th>
+              <th>Producer</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/rudra/imu/raw</code></td>
+              <td><code>sensor_msgs/msg/Imu</code></td>
+              <td>Serial bridge or micro-ROS agent</td>
+              <td>Raw gyro and accelerometer data. Orientation may be unset.</td>
+            </tr>
+            <tr>
+              <td><code>/rudra/imu/data</code></td>
+              <td><code>sensor_msgs/msg/Imu</code></td>
+              <td><code>imu_filter_madgwick</code> or complementary filter</td>
+              <td>Filtered IMU with orientation quaternion.</td>
+            </tr>
+            <tr>
+              <td><code>/odometry/filtered</code></td>
+              <td><code>nav_msgs/msg/Odometry</code></td>
+              <td><code>robot_localization</code></td>
+              <td>Fused robot state from wheel odom plus IMU.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Run and inspect the filter</h3>
+        <pre><code>source ~/.bashrc
+ros2 pkg executables imu_filter_madgwick
+ros2 run imu_filter_madgwick imu_filter_madgwick_node \
+  --ros-args \
+  -r imu/data_raw:=/rudra/imu/raw \
+  -r imu/data:=/rudra/imu/data \
+  -p use_mag:=false \
+  -p publish_tf:=false</code></pre>
+
+        <p>
+          In another terminal, verify the message flow:
+        </p>
+        <pre><code>ros2 topic hz /rudra/imu/raw
+ros2 topic echo /rudra/imu/data --once
+ros2 interface show sensor_msgs/msg/Imu</code></pre>
+
+        <div class="callout">
+          Keep the IMU frame explicit. A good first frame name is <code>imu_link</code>. Mounting direction
+          matters: if the sensor board is rotated relative to <code>base_link</code>, fix that in URDF/static
+          TF or in firmware, not by guessing signs in multiple nodes.
+        </div>
+
+        <h3>IMU calibration checklist</h3>
+        <ul>
+          <li>Measure gyro bias while the robot is perfectly still at boot.</li>
+          <li>Publish SI units: radians per second for gyro, meters per second squared for acceleration.</li>
+          <li>Fill covariance values. If unknown, use conservative non-zero diagonal values rather than pretending perfect certainty.</li>
+          <li>Disable magnetometer fusion unless the physical IMU has a calibrated magnetometer and the robot is not near large current loops.</li>
+          <li>Use <code>rviz_imu_plugin</code> or RViz transforms to visually confirm orientation before driving.</li>
+        </ul>
+
+        <h3>10. Sabertooth 2x12 in ROS 2</h3>
+        <p>
+          Sabertooth is not a ROS package; it is a motor driver. In ROS 2, write a NUC-side motor
+          bridge or a microcontroller firmware bridge that converts safe velocity commands into
+          Sabertooth serial commands. For a differential drive robot, the clean ROS graph is:
+        </p>
+
+        <pre><code>/cmd_vel
+  -> rudra_base_controller
+  -> left/right wheel speed targets
+  -> Sabertooth packet serial or simplified serial
+  -> motors
+  -> encoders
+  -> /rudra/wheel_odom
+  -> robot_localization</code></pre>
+
+        <h3>Sabertooth serial modes</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Mode</th>
+              <th>When to use</th>
+              <th>ROS 2 implication</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Simplified serial</td>
+              <td>One Sabertooth, minimal firmware, single-byte commands.</td>
+              <td>Easy to bring up, but weak addressing and integrity. Good bench test mode.</td>
+            </tr>
+            <tr>
+              <td>Packetized serial</td>
+              <td>Robot use, multiple drivers, better command structure.</td>
+              <td>Preferred RUDRA mode. Use address, command, data, and checksum bytes.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          Packetized serial uses four bytes: address, command, data, and a 7-bit checksum. The
+          checksum formula from the Sabertooth guide is:
+        </p>
+        <pre><code>checksum = (address + command + data) &amp; 0x7f</code></pre>
+
+        <h3>Python packet helper for a ROS 2 bridge</h3>
+        <pre><code>def sabertooth_packet(address: int, command: int, data: int) -&gt; bytes:
+    address &amp;= 0xff
+    command &amp;= 0xff
+    data &amp;= 0xff
+    checksum = (address + command + data) &amp; 0x7f
+    return bytes([address, command, data, checksum])</code></pre>
+
+        <h3>Safety rules for Sabertooth bring-up</h3>
+        <ul>
+          <li>Start with wheels off the ground.</li>
+          <li>Use a current-limited supply for early tests if possible.</li>
+          <li>Confirm battery chemistry and lithium cutoff DIP switch settings before robot power tests.</li>
+          <li>Use a hardware emergency stop. In packetized serial mode, Sabertooth S2 can be wired as active-low emergency stop.</li>
+          <li>Make the ROS 2 bridge command zero speed if <code>/cmd_vel</code> times out.</li>
+          <li>Log every raw motor command until the sign convention is proven.</li>
+        </ul>
+
+        <h3>11. Arduino MPU6050 libraries in a ROS 2 robot</h3>
+        <p>
+          Jeff Rowberg's I2Cdevlib remains useful on Arduino/Teensy firmware. It is not installed as
+          a ROS 2 package; it belongs in the firmware project. The firmware should read the MPU6050,
+          calibrate it, and send either raw IMU data or a DMP quaternion to the NUC.
+        </p>
+
+        <pre><code>mkdir -p ~/Arduino/libraries
+cd ~/Downloads
+git clone https://github.com/jrowberg/i2cdevlib.git
+cp -r i2cdevlib/Arduino/I2Cdev ~/Arduino/libraries/
+cp -r i2cdevlib/Arduino/MPU6050 ~/Arduino/libraries/</code></pre>
+
+        <h3>Firmware-to-ROS message mapping</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>MPU6050 value</th>
+              <th>ROS 2 field</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Gyro x/y/z</td>
+              <td><code>angular_velocity</code></td>
+              <td>Convert to rad/s before publishing.</td>
+            </tr>
+            <tr>
+              <td>Accel x/y/z</td>
+              <td><code>linear_acceleration</code></td>
+              <td>Convert to m/s^2. At rest, magnitude should be close to 9.81.</td>
+            </tr>
+            <tr>
+              <td>DMP quaternion</td>
+              <td><code>orientation</code></td>
+              <td>Use only after confirming frame convention and calibration.</td>
+            </tr>
+            <tr>
+              <td>Temperature</td>
+              <td>Diagnostic topic</td>
+              <td>Useful for drift debugging, not part of <code>sensor_msgs/Imu</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Serial packet suggestion for IMU</h3>
+        <p>
+          For a custom serial bridge, make the firmware output one complete line per IMU sample.
+          Example CSV shape:
+        </p>
+        <pre><code>IMU,stamp_us,gx,gy,gz,ax,ay,az
+IMU,18300420,0.001,-0.002,0.003,0.12,-0.05,9.78</code></pre>
+
+        <p>
+          The NUC-side ROS 2 Python node reads the line, validates the field count, converts units,
+          fills <code>sensor_msgs/msg/Imu</code>, and publishes <code>/rudra/imu/raw</code>. Keep the parsing
+          strict; malformed sensor packets should increment a diagnostic counter, not silently drive
+          the robot state estimate.
+        </p>
+
+        <h3>12. Arduino UNO PS2 controller in ROS 2</h3>
+        <p>
+          There are two valid ROS 2 paths for PS2-style control. If the controller appears to Linux
+          as a USB joystick, use ROS 2 <code>joy</code> and <code>teleop_twist_joy</code> directly on the NUC or
+          Aghora. If it is a PS2 wireless receiver wired to Arduino pins, read it in firmware with
+          <code>PS2X_lib</code>, then publish equivalent joystick values to ROS 2 through serial.
+        </p>
+
+        <h3>Path A: Linux joystick input</h3>
+        <pre><code>sudo apt install -y ros-lyrical-joy ros-lyrical-joy-linux ros-lyrical-teleop-twist-joy
+source ~/.bashrc
+ros2 run joy joy_enumerate_devices
+ros2 run joy joy_node
+ros2 topic echo /joy</code></pre>
+
+        <p>For direct teleop:</p>
+        <pre><code>ros2 launch teleop_twist_joy teleop-launch.py joy_config:=ps3</code></pre>
+
+        <h3>Path B: PS2 receiver wired to Arduino or Teensy</h3>
+        <pre><code>cd ~/Downloads
+git clone https://github.com/madsci1016/Arduino-PS2X.git
+cp -r Arduino-PS2X/PS2X_lib ~/Arduino/libraries/</code></pre>
+
+        <p>
+          Typical PS2 receiver signals are data, command, attention/select, clock, power, and ground.
+          Keep the receiver logic voltage compatible with the microcontroller. Many wireless PS2
+          receivers are happiest at 3.3 V logic; do not assume a motor-driver board's power pin is a
+          safe logic supply.
+        </p>
+
+        <h3>Recommended PS2 serial packet</h3>
+        <pre><code>JOY,stamp_us,lx,ly,rx,ry,buttons
+JOY,18320100,-0.03,0.91,0.02,-0.01,0x0048</code></pre>
+
+        <p>
+          The NUC-side bridge converts that packet to <code>sensor_msgs/msg/Joy</code>. Then RUDRA can use
+          normal ROS 2 tools such as <code>teleop_twist_joy</code>, record joystick input in rosbag2, and
+          replay controller data during debugging.
+        </p>
+
+        <h3>Bring-up order for the four hardware items</h3>
+        <ol>
+          <li>Bring up serial permissions and stable device names under <code>/dev/serial/by-id</code>.</li>
+          <li>Read MPU6050 on firmware and print calibrated raw values to serial.</li>
+          <li>Publish <code>/rudra/imu/raw</code>, then run <code>imu_filter_madgwick</code> and inspect <code>/rudra/imu/data</code>.</li>
+          <li>Read PS2 controller and publish <code>/joy</code> or a serial packet that becomes <code>/joy</code>.</li>
+          <li>Test Sabertooth serial with motors disconnected or wheels lifted.</li>
+          <li>Only after signs, scaling, timeout behavior, and e-stop are verified, connect teleop to motor output.</li>
+        </ol>
+
+        <div class="callout ok">
+          RUDRA's ROS 2 target architecture should be boring in the best way:
+          <code>/joy</code> and autonomous planners produce <code>/cmd_vel</code>; motor bridge owns safety and
+          Sabertooth commands; IMU and wheel odom feed localization; all hardware can be inspected
+          with standard ROS 2 topics.
+        </div>
+      </section>
+
+      <section id="ssh">
+        <h2>11. SSH and Networking</h2>
+        <p>
+          The control laptop should reach the NUC over SSH, and ROS 2 discovery should stay on the
+          robot subnet. Keep the same <code>ROS_DOMAIN_ID</code> on every RUDRA machine.
+        </p>
+
+        <h3>Enable SSH on the NUC</h3>
+        <pre><code>sudo apt install -y openssh-server avahi-daemon
+sudo systemctl enable --now ssh
+sudo systemctl enable --now avahi-daemon
+systemctl status ssh --no-pager
+hostname -I</code></pre>
+
+        <h3>Allow SSH through firewall, if UFW is enabled</h3>
+        <pre><code>sudo ufw status
+sudo ufw allow OpenSSH</code></pre>
+
+        <h3>From Aghora laptop</h3>
+        <pre><code>ssh rudra@rudra.local</code></pre>
+
+        <p>Optional laptop-side <code>~/.ssh/config</code> entry:</p>
+        <pre><code>Host rudra
+    HostName rudra.local
+    User rudra
+    IdentityFile ~/.ssh/id_ed25519</code></pre>
+
+        <h3>ROS 2 multi-machine check</h3>
+        <p>On the NUC:</p>
+        <pre><code>source ~/.bashrc
+ros2 run rudra_core rudra_alive</code></pre>
+
+        <p>On Aghora, with ROS 2 Lyrical installed and matching environment variables:</p>
+        <pre><code>export ROS_DOMAIN_ID=42
+export ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+ros2 topic echo /rudra/heartbeat</code></pre>
+      </section>
+
+      <section id="optional-services">
+        <h2>12. Optional Boot Services</h2>
+        <p>
+          During development, run nodes manually in a terminal. Once a node is stable, create a
+          user-level systemd service so it starts when the NUC boots.
+        </p>
+
+        <h3>Example: heartbeat service</h3>
+        <pre><code>mkdir -p ~/.config/systemd/user
+cat &gt; ~/.config/systemd/user/rudra-alive.service &lt;&lt;'SERVICE'
+[Unit]
+Description=RUDRA ROS 2 heartbeat node
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -lc 'source /opt/ros/lyrical/setup.bash &amp;&amp; source "$HOME/Projects/RUDRA/RUDRAv3/ros2_ws/install/setup.bash" &amp;&amp; exec ros2 run rudra_core rudra_alive'
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=default.target
+SERVICE
+
+systemctl --user daemon-reload
+systemctl --user enable --now rudra-alive.service
+systemctl --user status rudra-alive.service --no-pager</code></pre>
+
+        <h3>Keep user services alive after logout</h3>
+        <pre><code>sudo loginctl enable-linger rudra</code></pre>
+
+        <div class="callout warn">
+          Only promote a node to a boot service after its serial ports, launch parameters, and
+          emergency-stop behavior are understood. Services restart automatically, which is useful
+          for monitoring nodes and risky for motion nodes if safety logic is incomplete.
+        </div>
+      </section>
+
+      <section id="troubleshooting">
+        <h2>13. Troubleshooting</h2>
+
+        <h3><code>ros2</code> command not found</h3>
+        <pre><code>source /opt/ros/lyrical/setup.bash
+echo 'source /opt/ros/lyrical/setup.bash' &gt;&gt; ~/.bashrc</code></pre>
+
+        <h3>Workspace package not found</h3>
+        <pre><code>cd ~/Projects/RUDRA/RUDRAv3/ros2_ws
+colcon build --symlink-install
+source install/setup.bash
+ros2 pkg list | grep rudra_core</code></pre>
+
+        <h3>Serial port permission denied</h3>
+        <pre><code>groups
+sudo usermod -aG dialout,plugdev rudra
+sudo udevadm control --reload-rules
+sudo udevadm trigger</code></pre>
+        <p>Then log out and back in, and physically reconnect the board.</p>
+
+        <h3>No <code>/dev/ttyACM0</code> appears</h3>
+        <pre><code>lsusb
+dmesg | tail -n 80
+ls -l /dev/serial/by-id 2&gt;/dev/null</code></pre>
+        <p>
+          Some Teensy sketches only expose USB serial when the firmware is built with a USB serial
+          mode. Also check cable quality: many USB cables provide power but no data lines.
+        </p>
+
+        <h3>ROS 2 machines cannot see each other</h3>
+        <pre><code>printenv | grep -E 'ROS_DOMAIN_ID|ROS_AUTOMATIC_DISCOVERY_RANGE|RMW_IMPLEMENTATION'
+ip addr
+ping rudra.local
+ros2 multicast receive</code></pre>
+        <p>In another terminal on the other machine:</p>
+        <pre><code>ros2 multicast send</code></pre>
+
+        <h3>apt cannot find ROS packages</h3>
+        <pre><code>. /etc/os-release
+echo "$VERSION_ID $VERSION_CODENAME $UBUNTU_CODENAME"
+apt-cache policy ros-lyrical-desktop
+sudo apt update</code></pre>
+
+        <h3>Quick health report</h3>
+        <pre><code>source ~/.bashrc
+ros2 doctor --report
+ros2 pkg prefix rudra_core
+ros2 topic list</code></pre>
+      </section>
+
+      <section id="references">
+        <h2>14. References</h2>
+        <ul>
+          <li><a href="https://adarsh-gouda.medium.com/rudra-nuc-93e9e726db22">Original RUDRA NUC Setup reference by Adarsh Gouda</a></li>
+          <li><a href="https://docs.ros.org/en/lyrical/Installation.html">ROS 2 Lyrical installation overview</a></li>
+          <li><a href="https://docs.ros.org/en/lyrical/Installation/Ubuntu-Install-Debs.html">ROS 2 Lyrical Ubuntu deb package installation</a></li>
+          <li><a href="https://docs.ros.org/en/lyrical/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html">ROS 2 colcon workspace tutorial</a></li>
+          <li><a href="https://docs.ros.org/en/lyrical/Tutorials/Intermediate/Rosdep.html">ROS 2 rosdep dependency tutorial</a></li>
+          <li><a href="https://www.pjrc.com/teensy/td_download.html">PJRC Teensyduino download and install</a></li>
+          <li><a href="https://www.pjrc.com/teensy/loader_linux.html">PJRC Teensy Loader for Linux</a></li>
+          <li><a href="https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-downloading-and-installing">Arduino IDE 2 installation guide</a></li>
+          <li><a href="https://github.com/micro-ROS/micro_ros_arduino">micro-ROS Arduino library</a></li>
+          <li><a href="https://index.ros.org/r/imu_tools/">ROS Index: imu_tools for ROS 2</a></li>
+          <li><a href="https://www.dimensionengineering.com/datasheets/Sabertooth2x12.pdf">Dimension Engineering Sabertooth 2x12 User's Guide</a></li>
+          <li><a href="https://github.com/jrowberg/i2cdevlib">Jeff Rowberg I2Cdevlib and MPU6050 Arduino libraries</a></li>
+          <li><a href="https://github.com/madsci1016/Arduino-PS2X">Arduino PS2X library for PlayStation 2 controllers</a></li>
+          <li><a href="https://index.ros.org/p/joy/">ROS 2 joy package</a></li>
+          <li><a href="https://docs.ros.org/en/rolling/p/teleop_twist_joy/index.html">ROS 2 teleop_twist_joy package</a></li>
+          <li><a href="https://ubuntu.com/server/docs/service-openssh/">Ubuntu OpenSSH server documentation</a></li>
+          <li><a href="https://code.visualstudio.com/docs/setup/linux">Visual Studio Code Linux setup</a></li>
+        </ul>
+      </section>
+
+      <p class="footer">
+        RUDRA ROS 2 NUC setup guide. Keep this file with the workspace so the robot can be rebuilt from a clean OS.
+      </p>
+    </main>
+  </div>
+</body>
+</html>
