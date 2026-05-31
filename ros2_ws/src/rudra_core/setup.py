@@ -1,3 +1,5 @@
+from glob import glob
+
 from setuptools import find_packages, setup
 
 package_name = 'rudra_core'
@@ -10,6 +12,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', glob('launch/*.launch.py')),
     ],
     package_data={'': ['py.typed']},
     install_requires=['setuptools'],
@@ -25,7 +28,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'rudra_alive = rudra_core.rudra_alive:main'
+            'rudra_alive = rudra_core.rudra_alive:main',
+            'odom_tf_broadcaster = rudra_core.odom_tf_broadcaster:main',
         ],
     },
 )
