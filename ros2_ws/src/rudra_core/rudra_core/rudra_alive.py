@@ -4,6 +4,7 @@ from std_msgs.msg import Int32
 
 
 class RudraAlive(Node):
+
     def __init__(self) -> None:
         super().__init__('rudra_alive')
         self.heartbeat = 0

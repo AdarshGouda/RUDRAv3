@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RUDRA NUC ROS 2 Lyrical Setup Guide</title>
+  <title>RUDRAv4 ROS 2 Lyrical NUC Setup Guide</title>
   <style>
     :root {
       color-scheme: light;
@@ -200,6 +200,73 @@
       margin-bottom: 4px;
     }
 
+    .figure-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .image-slot {
+      border: 1px dashed #aab5c5;
+      border-radius: 8px;
+      background: #fbfcfe;
+      min-height: 160px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .image-slot strong {
+      display: block;
+      color: var(--ink);
+    }
+
+    .image-slot code {
+      width: fit-content;
+    }
+
+    figure {
+      margin: 18px 0;
+    }
+
+    figure img {
+      display: block;
+      width: 100%;
+      max-height: 620px;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    figcaption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .article-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 18px 0;
+    }
+
+    .article-gallery figure {
+      margin: 0;
+    }
+
+    .article-gallery img {
+      height: 260px;
+    }
+
+    .article-gallery.compact img {
+      height: 180px;
+    }
+
     .callout {
       border-left: 4px solid var(--accent);
       background: var(--accent-soft);
@@ -216,6 +283,32 @@
     .callout.ok {
       border-left-color: var(--ok);
       background: var(--ok-soft);
+    }
+
+    .resource-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .resource {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      padding: 13px;
+    }
+
+    .resource strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .resource span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 4px;
     }
 
     .label {
@@ -299,6 +392,18 @@
       .grid {
         grid-template-columns: 1fr;
       }
+
+      .figure-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .article-gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .resource-list {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -306,12 +411,12 @@
   <header class="hero">
     <div class="hero-inner">
       <div>
-        <p class="eyebrow">RUDRA robot bring-up</p>
-        <h1>NUC Setup for Ubuntu 26.04 + ROS 2 Lyrical</h1>
+        <p class="eyebrow">RUDRAv4 robot bring-up</p>
+        <h1>RUDRAv4 NUC Setup for Ubuntu 26.04 + ROS 2 Lyrical</h1>
         <p class="subtitle">
-          A fresh-install guide for turning a bare Intel NUC into the RUDRA ROS 2 onboard computer:
-          OS tools, Python, ROS 2, workspace build, shell environment, Teensy access, serial tooling,
-          SSH, and first heartbeat validation.
+          A ROS 2-native build guide for turning a bare Intel NUC into the RUDRAv4 onboard
+          computer: Ubuntu, Python, ROS 2 Lyrical, the RUDRA workspace, Teensy/Arduino tooling,
+          serial hardware contracts, SSH, and first heartbeat validation.
         </p>
       </div>
       <aside class="hero-card" aria-label="Quick summary">
@@ -319,7 +424,7 @@
         <ul>
           <li>Host name: <code>rudra</code></li>
           <li>ROS distro: <code>lyrical</code></li>
-          <li>Workspace: <code>~/Projects/RUDRA/RUDRAv3/ros2_ws</code></li>
+          <li>Workspace: <code>~/Projects/RUDRA/RUDRAv4/ros2_ws</code></li>
           <li>Smoke test: <code>ros2 run rudra_core rudra_alive</code></li>
         </ul>
       </aside>
@@ -329,71 +434,626 @@
   <div class="layout">
     <nav aria-label="Table of contents">
       <h2>Setup Path</h2>
-      <a href="#intent">1. What This Replaces</a>
-      <a href="#assumptions">2. Assumptions</a>
-      <a href="#install-ubuntu">3. Install Ubuntu</a>
-      <a href="#bootstrap">4. Bootstrap Linux Tools</a>
-      <a href="#ros2">5. Install ROS 2 Lyrical</a>
-      <a href="#workspace">6. Get RUDRA Workspace</a>
-      <a href="#environment">7. Shell Environment</a>
-      <a href="#build">8. Build and Test</a>
-      <a href="#serial">9. Teensy and Serial</a>
-      <a href="#hardware-deep-dive">10. IMU, Motors, PS2</a>
-      <a href="#ssh">11. SSH and Networking</a>
-      <a href="#optional-services">12. Optional Services</a>
-      <a href="#troubleshooting">13. Troubleshooting</a>
-      <a href="#references">14. References</a>
+      <a href="#intent">1. RUDRAv4 Intent</a>
+      <a href="#rudra-progression">2. RUDRAv4 Progression</a>
+      <a href="#assumptions">3. Assumptions</a>
+      <a href="#install-ubuntu">4. Install Ubuntu</a>
+      <a href="#bootstrap">5. Bootstrap Linux Tools</a>
+      <a href="#ros2">6. Install ROS 2 Lyrical</a>
+      <a href="#workspace">7. Get RUDRA Workspace</a>
+      <a href="#environment">8. Shell Environment</a>
+      <a href="#build">9. Build and Test</a>
+      <a href="#serial">10. Teensy and Serial</a>
+      <a href="#hardware-deep-dive">11. IMU, Motors, PS2</a>
+      <a href="#ssh">12. SSH and Networking</a>
+      <a href="#optional-services">13. Optional Services</a>
+      <a href="#troubleshooting">14. Troubleshooting</a>
+      <a href="#references">15. References</a>
     </nav>
 
     <main>
       <section id="intent">
-        <h2>1. What This Replaces</h2>
+        <h2>1. RUDRAv4 Intent</h2>
         <p>
-          The original RUDRA NUC reference was written for Ubuntu 20.04 and ROS 1 Noetic. Its broad
-          intent is still useful: install developer tools, Arduino/Teensy support, serial access,
-          SSH, and the robot workspace. The implementation changes for ROS 2:
+          RUDRAv4 is a ROS 2 robot from the ground up. The robot inherits hard-won mechanical,
+          electrical, and control lessons from earlier RUDRA experiments, but the story starts here:
+          a fresh Ubuntu 26.04 NUC, ROS 2 Lyrical, and a clean robot stack designed around ROS 2
+          packages, topics, launch files, and hardware bridge contracts.
         </p>
 
         <table>
           <thead>
             <tr>
-              <th>Old ROS 1 idea</th>
-              <th>ROS 2 Lyrical version for RUDRA</th>
+              <th>RUDRAv4 design layer</th>
+              <th>ROS 2-native decision</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><code>ros-noetic-desktop-full</code></td>
-              <td><code>ros-lyrical-desktop</code> or <code>ros-lyrical-ros-base</code></td>
+              <td>Operating system</td>
+              <td>Ubuntu 26.04 on the Intel NUC.</td>
             </tr>
             <tr>
-              <td><code>catkin</code>, <code>catkin_tools</code></td>
-              <td><code>ament</code> packages built with <code>colcon</code></td>
+              <td>Robot middleware</td>
+              <td>ROS 2 Lyrical, built with <code>colcon</code> and <code>ament</code>.</td>
             </tr>
             <tr>
-              <td><code>rosrun</code>, <code>roslaunch</code></td>
-              <td><code>ros2 run</code>, <code>ros2 launch</code></td>
+              <td>Robot base</td>
+              <td>Teensy/Arduino firmware owns hardware timing; ROS 2 owns topics, launch, logs, and autonomy.</td>
             </tr>
             <tr>
-              <td><code>rosserial_arduino</code></td>
-              <td>Plain serial nodes, <code>swri_serial_util</code>, or micro-ROS for MCU-native ROS 2</td>
+              <td>Serial boundary</td>
+              <td>A deliberate ROS 2 hardware bridge contract: custom serial packets first, micro-ROS later if it improves the design.</td>
             </tr>
             <tr>
-              <td><code>devel/setup.bash</code></td>
-              <td><code>install/setup.bash</code></td>
+              <td>First proof of life</td>
+              <td><code>ros2 run rudra_core rudra_alive</code> and <code>/rudra/heartbeat</code>.</td>
             </tr>
           </tbody>
         </table>
 
         <div class="callout">
-          <strong>Important:</strong> <code>rosserial_arduino</code> was not carried forward as the normal ROS 2 path.
-          For Teensy/Arduino in a ROS 2 robot, decide whether the microcontroller should speak ROS 2 itself
-          through micro-ROS, or whether the NUC should read/write a custom serial protocol and publish ROS 2 topics.
+          <strong>Engineering stance:</strong> Earlier RUDRA firmware and diagrams are reference material.
+          RUDRAv4 should be explained, organized, and launched as a ROS 2-native robot.
         </div>
       </section>
 
+      <section id="rudra-progression">
+        <h2>2. RUDRAv4 Build Progression</h2>
+        <p>
+          The audience should learn RUDRAv4 in the same progression as the complete RUDRA build:
+          understand differential drive theory, choose the hardware, assemble the base, set up the
+          NUC, bring up the base controller, publish odometry and IMU data, then layer navigation on
+          top. The voice of this guide is direct: this is the ROS 2 robot, with ROS 2 decisions made
+          from day one.
+        </p>
+
+        <div class="callout ok">
+          The images below are local assets from <code>ros2_ws/docs/assets/</code>. Since these are your
+          images, this page now uses them directly instead of showing placeholders.
+        </div>
+
+        <h3>Article progression, RUDRAv4 interpretation</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Progression</th>
+              <th>Explanation to preserve</th>
+              <th>RUDRAv4 implementation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Robot overview and mechanical platform</td>
+              <td>Show the rover first so the reader understands what the software will bring to life.</td>
+              <td>Intel NUC running Ubuntu 26.04 and ROS 2 Lyrical.</td>
+            </tr>
+            <tr>
+              <td>Electronics and controller layout</td>
+              <td>Explain modularity: the brain and the base are separated so compute can change without rebuilding the base.</td>
+              <td>NUC is the ROS 2 brain; Teensy/Arduino are hardware controllers.</td>
+            </tr>
+            <tr>
+              <td>Software setup</td>
+              <td>Install the tools before flashing firmware or running robot code.</td>
+              <td>ROS 2 Lyrical, Arduino/Teensy tooling, udev rules, and workspace overlay sourcing.</td>
+            </tr>
+            <tr>
+              <td>PS2/manual mode</td>
+              <td>Manual control is a deliberate robot mode, useful for testing and mapping.</td>
+              <td>Publish standard ROS 2 <code>/joy</code> or a RUDRA-specific ROS 2 interface.</td>
+            </tr>
+            <tr>
+              <td>Base control and Sabertooth</td>
+              <td>Convert <code>/cmd_vel</code> into wheel commands, close the loop with encoders, and stop safely on timeout.</td>
+              <td>Teensy receives a ROS 2 bridge command packet and owns motor safety.</td>
+            </tr>
+            <tr>
+              <td>IMU and odometry</td>
+              <td>Wheel odometry and IMU each have flaws; fusion gives better state estimation.</td>
+              <td>Publish <code>/rudra/imu/raw</code>, <code>/rudra/wheel_odom</code>, and fuse with ROS 2 tools.</td>
+            </tr>
+            <tr>
+              <td>Navigation stack</td>
+              <td>Navigation only works after TF, odometry, scan data, and base control are correct.</td>
+              <td>Nav2 comes after the base stack is stable and observable.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>RUDRAv4 platform overview</h3>
+        <p>
+          Begin with the robot itself. RUDRAv4 is a differential-drive rover with an onboard Intel
+          NUC, YDLiDAR-class 360 degree lidar, a regulated NUC power path, Teensy/Arduino base
+          electronics, Sabertooth motor drivers, encoder feedback, and an MPU6050 IMU. The compute
+          stack is ROS 2 from the start.
+        </p>
+        <div class="article-gallery">
+          <figure>
+            <img src="assets/1_7muOQ8rflt8CECSZq0Pv-A.webp" alt="RUDRA rover front angle with lidar and electronics enclosure">
+            <figcaption>RUDRAv4 rover overview: the robot as the reader should understand it before setup begins.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_EiHbouGK78r4nD5VZAncFg.webp" alt="RUDRA rover front view showing lidar and chassis">
+            <figcaption>NUC-class onboard compute is the ROS 2 brain of the rover.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_GVqicLln4QgRwp98WKmUDQ (1).webp" alt="RUDRA rover front photo">
+            <figcaption>Mechanical platform and sensor placement reference.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_r5c66cZ54bpe_2-TZcVJTw.webp" alt="RUDRA rover side angle with blue wheel lights">
+            <figcaption>Physical orientation and deck layout reference.</figcaption>
+          </figure>
+        </div>
+
+        <h3>A. Theory: differential drive robots</h3>
+        <p>
+          The article builds intuition before touching ROS. RUDRA is differential drive: steering is
+          produced by the difference between left and right wheel velocities. The values used later in
+          firmware are still important in ROS 2: wheel radius <code>0.0675 m</code> and wheelbase
+          <code>0.29 m</code>.
+        </p>
+        <div class="resource-list">
+          <div class="resource">
+            <strong>Source article video slot: differential drive lecture</strong>
+            <span>The Medium article says "watch this lecture" for the derivation of wheel velocities. The pasted article text does not include the exact YouTube URL, so copy it from the Medium embed/share menu before treating this as complete.</span>
+          </div>
+          <div class="resource">
+            <strong>Source article video slot: DC motor PWM playlist</strong>
+            <span>The article points to a YouTube playlist for DC motor control. Add the exact playlist URL from the source embed if you want the offline HTML to preserve that link exactly.</span>
+          </div>
+        </div>
+        <div class="article-gallery compact">
+          <figure>
+            <img src="assets/1_TSHFjAf1XxFMTtWrufzmEA.webp" alt="Differential drive motion examples">
+            <figcaption>Differential drive behavior: straight, turning, and spinning in place.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_5HAM1sGJSfx51wOvNKVOIA.webp" alt="Robot pose and global coordinate frame">
+            <figcaption>Robot pose in the map frame: <code>x</code>, <code>y</code>, and heading.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_q9-wVf6dGUhD4rQjYvgzsQ.webp" alt="Wheelbase and wheel velocity definitions">
+            <figcaption>Wheel velocity and wheelbase definitions used by the base controller.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_C0GeM3OlRZgyVuZSu_C6gA.webp" alt="Wheel velocity equations">
+            <figcaption>Converting commanded linear/angular velocity into left and right wheel velocity.</figcaption>
+          </figure>
+        </div>
+
+        <p>
+          The control story then becomes: compute wheel targets, measure actual wheel motion with
+          encoders, use PID to reduce error, compute odometry, and publish transforms.
+        </p>
+        <div class="article-gallery">
+          <figure>
+            <img src="assets/1_TapkHCzzt9sFq6Jp1bcKIw.webp" alt="Basic flowchart for command velocity to PWM">
+            <figcaption>First flowchart: command velocity becomes wheel targets and PWM output.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_ipnNrH76bSfIGHN-xNACZw.webp" alt="Flowchart including encoder feedback">
+            <figcaption>Feedback loop added with encoder measurements.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_MFHmLD5CAY70eLAAY6USLQ.webp" alt="Flowchart including PID control">
+            <figcaption>PID closes the gap between requested and actual wheel speed.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_P8sfawQ09pQGpePEHR5u5g.webp" alt="Flowchart including odometry">
+            <figcaption>Odometry calculation becomes part of the base loop.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_38XsHnT9cVJV5TjNe516Lw.webp" alt="Flowchart including transforms">
+            <figcaption>Final base loop publishes odometry and transforms back to ROS.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_RqK-Ch6_czdf1lrpqont8Q.webp" alt="Odometry update equations">
+            <figcaption>Dead-reckoning update equations behind the Teensy odometry code.</figcaption>
+          </figure>
+        </div>
+
+        <h3>B and C. BOM, architecture, and modular hardware stack</h3>
+        <p>
+          RUDRA separates the brain from the base. The NUC runs ROS 2. The base microcontrollers own
+          low-level hardware timing: PS2 receiver, MPU6050, encoders, and Sabertooth motor commands.
+        </p>
+        <div class="resource-list">
+          <div class="resource">
+            <strong>RUDRA hardware BOM reference</strong>
+            <a href="https://github.com/AdarshGouda/RUDRAv3/tree/main/BOM">RUDRA BOM on GitHub</a>
+            <span>Hardware bill of materials used to select the RUDRAv4 platform components.</span>
+          </div>
+          <div class="resource">
+            <strong>Arduino versus Teensy context</strong>
+            <a href="https://www.pjrc.com/teensy/">PJRC Teensy product family</a>
+            <span>The article compares Arduino and Teensy to explain why Teensy owns the base workload.</span>
+          </div>
+        </div>
+        <div class="article-gallery">
+          <figure>
+            <img src="assets/1_Qjs-mJ-THOb0_oXTRWNQUg.webp" alt="RUDRA base architecture diagram">
+            <figcaption>RUDRA base stack: brain/deck separated from hardware-control responsibilities.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1__IUPOGOdMFwP-yBlzWz1Cg.webp" alt="RUDRA architecture v2 diagram">
+            <figcaption>Architecture view to translate into ROS 2 topics, launch files, and serial packets.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/0_xHlgVqwGnZh2WSbH.webp" alt="RUDRA base electronics mounted inside chassis">
+            <figcaption>RUDRA base hardware layout: physical reference for wiring and service access.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/0_26cyoo5rU76-oVtM.webp" alt="RUDRA ROS architecture diagram">
+            <figcaption>RUDRA architecture concept expressed in ROS 2 Lyrical packages and topics.</figcaption>
+          </figure>
+        </div>
+
+        <h3>D. Software setup, now updated for the NUC</h3>
+        <p>
+          RUDRAv4 software setup starts with the NUC. Install Ubuntu, install ROS 2 Lyrical, install
+          Arduino and Teensy tools, install udev rules, and verify the workspace before any hardware
+          motion test. The firmware toolchain exists to support the ROS 2 robot, not the other way
+          around.
+        </p>
+        <div class="resource-list">
+          <div class="resource">
+            <strong>Arduino IDE setup reference</strong>
+            <a href="https://github.com/JetsonHacksNano/installArduinoIDE">JetsonHacksNano/installArduinoIDE</a>
+            <span>Useful background for Arduino tooling. On the RUDRAv4 NUC, prefer current Ubuntu packages, Arduino CLI, or current Arduino IDE.</span>
+          </div>
+          <div class="resource">
+            <strong>Teensyduino download</strong>
+            <a href="https://www.pjrc.com/teensy/td_download.html">PJRC Teensyduino downloads</a>
+            <span>Use the current Linux installer/package for the NUC architecture.</span>
+          </div>
+          <div class="resource">
+            <strong>Teensy udev rules</strong>
+            <a href="https://www.pjrc.com/teensy/00-teensy.rules">PJRC 00-teensy.rules</a>
+            <span>Install to <code>/etc/udev/rules.d/00-teensy.rules</code>.</span>
+          </div>
+          <div class="resource">
+            <strong>Teensy Loader on Linux</strong>
+            <a href="https://www.pjrc.com/teensy/loader_linux.html">PJRC Teensy Loader Linux setup</a>
+            <span>The source article links this for loader setup.</span>
+          </div>
+          <div class="resource">
+            <strong>Teensy tutorial</strong>
+            <a href="https://www.pjrc.com/teensy/tutorial.html">PJRC Teensy tutorial</a>
+            <span>Use this to confirm the Teensy toolchain works before touching RUDRA firmware.</span>
+          </div>
+          <div class="resource">
+            <strong>Source article ROS install background</strong>
+            <a href="http://wiki.ros.org/noetic/Installation/Ubuntu">ROS Noetic Ubuntu installation</a>
+            <span>This is preserved as a source-article reference. The RUDRAv4 setup steps below use ROS 2 Lyrical.</span>
+          </div>
+        </div>
+
+        <h3>E and F. Schematic, wiring, power, and batteries</h3>
+        <p>
+          These images are still directly relevant. The wiring diagram and Sabertooth setup explain
+          why the Teensy remains the safest place to own motor timing, e-stop behavior, and encoder
+          loops.
+        </p>
+        <div class="resource-list">
+          <div class="resource">
+            <strong>Sabertooth 2x12 product page</strong>
+            <a href="https://www.dimensionengineering.com/products/sabertooth2x12">Dimension Engineering Sabertooth 2x12</a>
+            <span>Motor driver reference for the RUDRA base.</span>
+          </div>
+          <div class="resource">
+            <strong>Sabertooth 2x12 manual</strong>
+            <a href="https://www.dimensionengineering.com/datasheets/Sabertooth2x12.pdf">Sabertooth 2x12 User's Guide PDF</a>
+            <span>Packetized serial, DIP switches, and electrical setup.</span>
+          </div>
+          <div class="resource">
+            <strong>Sabertooth Arduino setup</strong>
+            <a href="https://www.dimensionengineering.com/info/arduino">Dimension Engineering Arduino library setup</a>
+            <span>Firmware-side library used for Teensy/Arduino-style Sabertooth control.</span>
+          </div>
+          <div class="resource">
+            <strong>Motor spec sheet</strong>
+            <a href="https://www.robotshop.com/media/files/pdf2/049-rb-cyt-83.pdf">12V gear motor with encoder PDF</a>
+            <span>Used to reason about stall current and motor-driver sizing.</span>
+          </div>
+          <div class="resource">
+            <strong>L298N cautionary comparison</strong>
+            <a href="https://handsontec.com/dataspecs/module/L298N%20Motor%20Driver.pdf">L298N motor driver PDF</a>
+            <span>The article calls this out as underpowered for RUDRA's motor current needs.</span>
+          </div>
+          <div class="resource">
+            <strong>NUC power converter</strong>
+            <a href="https://www.mini-box.com/DCDC-USB">mini-box DCDC-USB intelligent converter</a>
+            <span>Regulated power path for feeding the NUC.</span>
+          </div>
+        </div>
+        <div class="article-gallery">
+          <figure>
+            <img src="assets/1_4y6o0tGgo-ef4EzPD6G71g.webp" alt="RUDRA wiring diagram">
+            <figcaption>RUDRA base wiring diagram. Preserve this as the physical wiring reference.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_iBuhhitoPT3GFNmBWM9etg.webp" alt="Sabertooth wiring concept">
+            <figcaption>Sabertooth/motor wiring concept used by the Teensy base controller.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_B7c-KQVs-ytpiRfh6bcUSw.webp" alt="Sabertooth DIP switch address setup">
+            <figcaption>Sabertooth packet serial address setup: right and left controllers use different addresses.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_WaOtC2EKHjTXXbUEg_qCGw.webp" alt="Sabertooth library code change for Serial1">
+            <figcaption>Firmware note: Teensy uses Serial1 for motor drivers while USB serial talks to the NUC.</figcaption>
+          </figure>
+        </div>
+
+        <h3>G. rudra_base hardware and software integration</h3>
+        <p>
+          The base is the contract between real hardware and ROS 2. RUDRAv4 integrates each hardware
+          subsystem deliberately: PS2/manual control, Sabertooth motor output, encoder feedback,
+          MPU6050 IMU data, odometry, and transforms. Each boundary is either a ROS 2 topic on the
+          NUC or a serial packet crossing between firmware and the NUC.
+        </p>
+        <div class="resource-list">
+          <div class="resource">
+            <strong>Really Useful Robot firmware reference</strong>
+            <a href="https://github.com/XRobots/ReallyUsefulRobot/blob/main/arduino/RUR099/RUR099.ino">XRobots RUR099.ino</a>
+            <span>Reference noted in the RUDRA Sabertooth/cmd_vel sketch.</span>
+          </div>
+          <div class="resource">
+            <strong>PJRC Encoder library</strong>
+            <a href="https://www.pjrc.com/teensy/td_libs_Encoder.html">Encoder Library</a>
+            <span>Used for Teensy quadrature encoder counting.</span>
+          </div>
+          <div class="resource">
+            <strong>RUDRA base controller sketch</strong>
+            <a href="https://github.com/AdarshGouda/RUDRAv3/blob/main/v2_base_controler_AE/v2_base_controler_AE.ino">v2_base_controler_AE.ino</a>
+            <span>Reference firmware for the RUDRAv4 base-controller design.</span>
+          </div>
+          <div class="resource">
+            <strong>RUDRA UNO PS2 sketch</strong>
+            <a href="https://github.com/AdarshGouda/RUDRAv3/blob/main/uno-teensy-ros_AD/uno-teensy-ros_AD.ino">uno-teensy-ros_AD.ino</a>
+            <span>Arduino UNO PS2/manual-mode firmware reference.</span>
+          </div>
+          <div class="resource">
+            <strong>MPU6050 board manual</strong>
+            <a href="https://github.com/AdarshGouda/RUDRAv3/blob/main/IMU-Teensy/documentation-h-elc-sen-imu-3-ag/MPU6050-BBManual.pdf">MPU6050-BBManual.pdf</a>
+            <span>MPU6050 hardware reference for the RUDRA base.</span>
+          </div>
+          <div class="resource">
+            <strong>Source article video slot: MPU6050 implementation</strong>
+            <span>The article references a video used for IMU implementation. The exact YouTube URL is not visible in the pasted text or fetchable Medium HTML; copy it from the Medium embed to preserve it exactly.</span>
+          </div>
+          <div class="resource">
+            <strong>Source article video slot: EKF explanation videos</strong>
+            <span>The article says to watch EKF videos before using ROS fusion. Add the exact YouTube URLs from the source embeds when available.</span>
+          </div>
+        </div>
+        <div class="article-gallery">
+          <figure>
+            <img src="assets/1_-PJ1lhw8Wb5AX0AWKMlDUg.webp" alt="PS2 controller with Arduino wiring">
+            <figcaption>Arduino UNO + PS2 controller: preserve the manual-mode concept, publish as ROS 2 <code>/joy</code>.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/0_8GoWOSetNvohCzlQ.gif" alt="Encoder pulse diagram">
+            <figcaption>Encoder pulses are the base controller's feedback for velocity and odometry.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_Do3X3am0-Fz1OTqg5vZKrw.webp" alt="Actual wheel velocity formula">
+            <figcaption>Actual wheel speed from encoder counts over a time interval.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_pxgmN2RYU-EvenXS6JgmWA.webp" alt="Distance traveled formula">
+            <figcaption>Wheel travel distance from encoder counts.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_m3A_UxJXhM0XQw9LE1w1TA.webp" alt="Wheel distance odometry diagram">
+            <figcaption>Wheel distances used to estimate center displacement.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/0_GY8_hKM_4Zwbo41D.webp" alt="Coordinate frame visualization">
+            <figcaption>Coordinate frame orientation reference for ROS transforms.</figcaption>
+          </figure>
+        </div>
+
+        <h3>H. ROS-on-RUDRA, navigation, and coordinate frames</h3>
+        <p>
+          The ROS graph and navigation diagrams remain the right mental model. In RUDRAv4, the
+          implementation uses ROS 2 launch files, ROS 2 package names, and the ROS 2 navigation
+          stack. Bring up base, IMU, odom, and TF first. Add SLAM and navigation later with Nav2.
+        </p>
+        <div class="resource-list">
+          <div class="resource">
+            <strong>Source article video slot: ROS primer</strong>
+            <span>The article links a ROS primer YouTube playlist. The exact playlist URL is not present in the pasted text; copy the embed/share URL from Medium if you want this HTML to be exact.</span>
+          </div>
+          <div class="resource">
+            <strong>RUDRA NUC reference article</strong>
+            <a href="https://adarsh-gouda.medium.com/rudra-nuc-93e9e726db22">ROS:: RUDRA NUC</a>
+            <span>NUC setup background used while writing the RUDRAv4 rebuild path.</span>
+          </div>
+          <div class="resource">
+            <strong>Navigation stack background</strong>
+            <a href="http://wiki.ros.org/navigation">Navigation stack background</a>
+            <span>Background reference for the navigation diagrams; RUDRAv4 implements this layer with Nav2.</span>
+          </div>
+          <div class="resource">
+            <strong>Coordinate frame convention</strong>
+            <a href="https://www.ros.org/reps/rep-0105.html">REP 105: Coordinate Frames for Mobile Platforms</a>
+            <span>Use this to keep <code>map</code>, <code>odom</code>, <code>base_link</code>, <code>laser</code>, and <code>imu_link</code> consistent.</span>
+          </div>
+          <div class="resource">
+            <strong>NUC power reference</strong>
+            <a href="https://www.mini-box.com/DCDC-USB">DCDC-USB intelligent DC-DC converter</a>
+            <span>Referenced again in the article's rudra_deck discussion.</span>
+          </div>
+          <div class="resource">
+            <strong>Source article video slot: Jetson Nano setup videos</strong>
+            <span>The source article embeds Jetson setup videos as alternate compute-platform background. Exact YouTube URLs were not available from the pasted text.</span>
+          </div>
+        </div>
+        <div class="article-gallery">
+          <figure>
+            <img src="assets/1_xLezvFltpGHwfN_XdxnRKw.webp" alt="ROS graph or RUDRA integration diagram">
+            <figcaption>RUDRA integration diagram: express this graph directly as ROS 2 packages and launch files.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_DMxZZtup3PlNr9hYb3MIEA.webp" alt="Navigation stack overview">
+            <figcaption>Navigation stack concept. RUDRAv4 implements this layer with ROS 2 navigation tools.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/1_DMxZZtup3PlNr9hYb3MIEA (1).webp" alt="RUDRA navigation stack overview">
+            <figcaption>RUDRA-specific navigation architecture to build after base hardware is stable.</figcaption>
+          </figure>
+        </div>
+
+        <h3>H1. ROS 2 setup for RUDRAv4</h3>
+        <p>
+          RUDRAv4 uses the same conceptual layers as the full rover article: a workstation, an
+          onboard computer, a base controller, sensors, and navigation. The ROS 2 interpretation is
+          simpler to explain because there is no master process. Every RUDRAv4 machine joins the
+          same ROS domain, discovers peers on the robot subnet, and communicates through typed
+          topics, services, actions, parameters, and transforms.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Robot responsibility</th>
+              <th>RUDRAv4 ROS 2 expression</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Manual driving</td>
+              <td><code>/joy</code> and <code>/cmd_vel</code>, generated from PS2/manual mode or keyboard teleop.</td>
+            </tr>
+            <tr>
+              <td>Base control</td>
+              <td><code>rudra_hw_bridge</code> translates ROS 2 velocity commands into serial packets.</td>
+            </tr>
+            <tr>
+              <td>Wheel odometry</td>
+              <td>Teensy encoder telemetry becomes <code>/rudra/wheel_odom</code>.</td>
+            </tr>
+            <tr>
+              <td>IMU</td>
+              <td>MPU6050 telemetry becomes <code>/rudra/imu/raw</code>, then filtered IMU data.</td>
+            </tr>
+            <tr>
+              <td>Lidar</td>
+              <td>The lidar driver publishes <code>/scan</code> in the <code>laser</code> frame.</td>
+            </tr>
+            <tr>
+              <td>Robot model</td>
+              <td>URDF/Xacro plus <code>robot_state_publisher</code> define static transforms.</td>
+            </tr>
+            <tr>
+              <td>Autonomy</td>
+              <td>Nav2 consumes map, scan, TF, odometry, and goals, then publishes <code>/cmd_vel</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>H2. Coordinate frames</h3>
+        <p>
+          RUDRAv4 should teach frames before navigation. The <code>map</code> frame is the global
+          navigation reference. The <code>odom</code> frame is locally continuous and starts where the
+          robot begins. The <code>base_link</code> frame moves with the robot body. The
+          <code>laser</code> and <code>imu_link</code> frames are fixed to the body because those sensors are
+          physically mounted on the rover.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Transform</th>
+              <th>Publisher</th>
+              <th>Why it matters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>base_link -> laser</code></td>
+              <td><code>robot_state_publisher</code> from URDF</td>
+              <td>Lidar scans must be located on the robot body.</td>
+            </tr>
+            <tr>
+              <td><code>base_link -> imu_link</code></td>
+              <td><code>robot_state_publisher</code> from URDF</td>
+              <td>IMU orientation and acceleration need a known mounting frame.</td>
+            </tr>
+            <tr>
+              <td><code>odom -> base_link</code></td>
+              <td>Wheel odometry or fused odometry node</td>
+              <td>Local motion must be continuous for controllers and navigation.</td>
+            </tr>
+            <tr>
+              <td><code>map -> odom</code></td>
+              <td>SLAM or localization</td>
+              <td>The global map can correct drift without breaking local odometry continuity.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          RUDRA stays on the ground, so a separate <code>base_footprint</code> frame is optional. If
+          you add one, keep the tree consistent and do not publish competing transforms for the same
+          parent/child pair.
+        </p>
+
+        <h3>H3. RUDRA Tandav: first full-system bring-up</h3>
+        <p>
+          The first dance is not autonomy. It is a controlled proof that the ROS 2 graph, serial
+          bridge, firmware, motor timeout, manual override, odometry, IMU, and TF all agree. Start
+          with the wheels lifted, then repeat at low speed on the floor.
+        </p>
+        <pre><code># Terminal 1: robot core
+source ~/.bashrc
+ros2 launch rudra_bringup base_no_lidar.launch.py
+
+# Terminal 2: keyboard teleop
+source ~/.bashrc
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+
+# Terminal 3: observe the graph
+source ~/.bashrc
+ros2 topic list
+ros2 topic echo /rudra/base_status
+ros2 run tf2_tools view_frames</code></pre>
+        <p>
+          The PS2 controller remains a manual override mode. Pressing the selected mode button should
+          switch the base from autonomous <code>/cmd_vel</code> to manual joystick control, and pressing
+          it again should return the base to ROS 2 velocity commands. In every mode, timeout and
+          emergency-stop behavior stay active.
+        </p>
+
+        <h3>H4. SLAM and navigation</h3>
+        <p>
+          SLAM and navigation come after the base is boringly reliable. The RUDRAv4 stack needs a
+          stable <code>/scan</code>, correct static transforms, continuous <code>odom -> base_link</code>,
+          a filtered odometry estimate, and a safe <code>/cmd_vel</code> path before Nav2 is allowed to
+          drive the rover.
+        </p>
+        <ol>
+          <li>Verify lidar scan direction and frame in RViz.</li>
+          <li>Verify <code>robot_state_publisher</code> produces <code>base_link -> laser</code> and <code>base_link -> imu_link</code>.</li>
+          <li>Verify wheel odometry signs by pushing or commanding the rover forward slowly.</li>
+          <li>Run IMU filtering and check that yaw changes in the expected direction.</li>
+          <li>Fuse wheel odometry and IMU with <code>robot_localization</code>.</li>
+          <li>Run SLAM to build and save a map.</li>
+          <li>Run Nav2 localization against the saved map.</li>
+          <li>Send a short goal only after local costmaps and obstacle inflation look correct.</li>
+        </ol>
+
+        <h3>I. RUDRAv4 NUC setup</h3>
+        <p>
+          This page adds the repeatable RUDRAv4 NUC rebuild path: install Ubuntu 26.04, install ROS
+          2 Lyrical, source the workspace correctly, build <code>rudra_core</code>, verify
+          <code>/rudra/heartbeat</code>, install udev rules, and then bring up the serial bridge layer
+          one device at a time.
+        </p>
+      </section>
+
       <section id="assumptions">
-        <h2>2. Assumptions</h2>
+        <h2>3. Assumptions</h2>
         <div>
           <span class="label">Fresh Ubuntu 26.04</span>
           <span class="label">User: rudra</span>
@@ -413,7 +1073,7 @@
         <pre><code>/home/rudra/
   Projects/
     RUDRA/
-      RUDRAv3/
+      RUDRAv4/
         ros2_ws/
           src/
           docs/
@@ -430,7 +1090,7 @@
       </section>
 
       <section id="install-ubuntu">
-        <h2>3. Install Ubuntu 26.04 on the NUC</h2>
+        <h2>4. Install Ubuntu 26.04 on the NUC</h2>
         <ol>
           <li>Install Ubuntu 26.04 Desktop or Server. Desktop is easier when using RViz, Arduino IDE, and VS Code locally.</li>
           <li>Create the user <code>rudra</code>.</li>
@@ -457,7 +1117,7 @@ sudo add-apt-repository universe</code></pre>
       </section>
 
       <section id="bootstrap">
-        <h2>4. Bootstrap Linux Tools</h2>
+        <h2>5. Bootstrap Linux Tools</h2>
         <p>
           Install the base system tools explicitly. This section is intentionally broad because the
           starting point is a clean OS with no development stack assumed.
@@ -496,7 +1156,7 @@ rm -rf /tmp/rudra_venv_check</code></pre>
       </section>
 
       <section id="ros2">
-        <h2>5. Install ROS 2 Lyrical</h2>
+        <h2>6. Install ROS 2 Lyrical</h2>
         <p>
           ROS 2 Lyrical provides binary Debian packages for Ubuntu 26.04. For the robot NUC,
           <code>ros-lyrical-desktop</code> is convenient because it includes RViz and demos. If the NUC
@@ -549,8 +1209,16 @@ rosdep update</code></pre>
 
         <h3>Verify ROS itself</h3>
         <pre><code>source /opt/ros/lyrical/setup.bash
-ros2 --version
+echo "ROS_DISTRO=$ROS_DISTRO"
+which ros2
+ros2 --help
 ros2 doctor --report</code></pre>
+
+        <div class="callout">
+          ROS 2 Lyrical's <code>ros2</code> command does not provide a global <code>--version</code>
+          flag. Use <code>echo "$ROS_DISTRO"</code>, <code>which ros2</code>, package versions from
+          <code>apt policy</code>, and <code>ros2 doctor --report</code> to confirm the install.
+        </div>
 
         <div class="callout ok">
           A good first win: open two terminals, source ROS in both, run
@@ -560,9 +1228,9 @@ ros2 doctor --report</code></pre>
       </section>
 
       <section id="workspace">
-        <h2>6. Get the RUDRA Workspace</h2>
+        <h2>7. Get the RUDRA Workspace</h2>
         <p>
-          The current RUDRAv3 repo uses a ROS 2 workspace under <code>ros2_ws</code>. Clone it into
+          The current RUDRAv4 source tree uses a ROS 2 workspace under <code>ros2_ws</code>. Clone it into
           the expected location so scripts and shell aliases stay simple.
         </p>
 
@@ -572,12 +1240,12 @@ cd ~/Projects/RUDRA</code></pre>
 
         <h3>Clone the repo</h3>
         <pre><code># Preferred if your GitHub SSH key is configured:
-git clone git@github.com:AdarshGouda/RUDRAv3.git
+git clone git@github.com:AdarshGouda/RUDRAv4.git
 
 # HTTPS fallback:
-# git clone https://github.com/AdarshGouda/RUDRAv3.git
+# git clone https://github.com/AdarshGouda/RUDRAv4.git
 
-cd ~/Projects/RUDRA/RUDRAv3/ros2_ws</code></pre>
+cd ~/Projects/RUDRA/RUDRAv4/ros2_ws</code></pre>
 
         <h3>Expected package</h3>
         <p>The first ROS 2 package in this workspace is <code>rudra_core</code>, an <code>ament_python</code> package.</p>
@@ -589,14 +1257,16 @@ cd ~/Projects/RUDRA/RUDRAv3/ros2_ws</code></pre>
       </section>
 
       <section id="environment">
-        <h2>7. Shell Environment</h2>
+        <h2>8. Shell Environment</h2>
         <p>
           Every terminal should source ROS 2 first, then the RUDRA overlay workspace. Add this block
           at the bottom of <code>~/.bashrc</code>.
         </p>
 
         <pre><code># RUDRA ROS 2 environment
-export RUDRA_WS="$HOME/Projects/RUDRA/RUDRAv3/ros2_ws"
+export RUDRA_WS="$HOME/Projects/RUDRA/RUDRAv4/ros2_ws"
+# Drop stale overlays before sourcing the RUDRA workspace.
+unset COLCON_PREFIX_PATH
 
 if [ -f /opt/ros/lyrical/setup.bash ]; then
     source /opt/ros/lyrical/setup.bash
@@ -630,17 +1300,17 @@ rosenv</code></pre>
         <pre><code>ROS_DISTRO=lyrical
 ROS_DOMAIN_ID=42
 RMW_IMPLEMENTATION=rmw_fastrtps_cpp
-RUDRA_WS=/home/rudra/Projects/RUDRA/RUDRAv3/ros2_ws</code></pre>
+RUDRA_WS=/home/rudra/Projects/RUDRA/RUDRAv4/ros2_ws</code></pre>
       </section>
 
       <section id="build">
-        <h2>8. Build and Test the RUDRA Workspace</h2>
+        <h2>9. Build and Test the RUDRA Workspace</h2>
         <p>
           Use <code>rosdep</code> before every first build on a fresh machine. It reads each package's
           <code>package.xml</code> and asks apt to install the missing system dependencies.
         </p>
 
-        <pre><code>cd ~/Projects/RUDRA/RUDRAv3/ros2_ws
+        <pre><code>cd ~/Projects/RUDRA/RUDRAv4/ros2_ws
 source /opt/ros/lyrical/setup.bash
 rosdep install --from-paths src --ignore-src -r -y
 colcon build --symlink-install
@@ -655,7 +1325,7 @@ ros2 topic list
 ros2 topic echo /rudra/heartbeat</code></pre>
 
         <h3>Run tests</h3>
-        <pre><code>cd ~/Projects/RUDRA/RUDRAv3/ros2_ws
+        <pre><code>cd ~/Projects/RUDRA/RUDRAv4/ros2_ws
 colcon test --event-handlers console_direct+
 colcon test-result --verbose</code></pre>
 
@@ -666,7 +1336,7 @@ colcon test-result --verbose</code></pre>
       </section>
 
       <section id="serial">
-        <h2>9. Teensy and Serial Setup</h2>
+        <h2>10. Teensy and Serial Setup</h2>
         <p>
           RUDRA hardware talks to the NUC through USB serial devices such as Teensy or Arduino-class
           controllers. A fresh Linux install needs udev rules and user group membership before
@@ -688,7 +1358,7 @@ curl -L -o /tmp/00-teensy.rules https://www.pjrc.com/teensy/00-teensy.rules
 sudo install -m 0644 /tmp/00-teensy.rules /etc/udev/rules.d/00-teensy.rules
 
 # Repo-pinned copy, if present:
-# sudo install -m 0644 ~/Projects/RUDRA/RUDRAv3/00-teensy.rules /etc/udev/rules.d/00-teensy.rules
+# sudo install -m 0644 ~/Projects/RUDRA/RUDRAv4/00-teensy.rules /etc/udev/rules.d/00-teensy.rules
 
 sudo udevadm control --reload-rules
 sudo udevadm trigger</code></pre>
@@ -740,41 +1410,301 @@ dmesg -w</code></pre>
         </table>
 
         <div class="callout warn">
-          Do not copy ROS 1 <code>rosrun rosserial_arduino make_libraries.py</code> commands into this
-          ROS 2 setup. They belong to the Noetic workflow and create ROS 1 Arduino libraries.
+          RUDRAv4 does not use generated <code>rosserial_arduino</code> Arduino libraries. Keep the
+          microcontroller firmware as firmware, and connect it to ROS 2 through a deliberate serial
+          bridge or micro-ROS agent.
         </div>
       </section>
 
       <section id="hardware-deep-dive">
-        <h2>10. ROS 2 Deep Dive: IMU, Sabertooth, MPU6050, and PS2 Control</h2>
+        <h2>11. RUDRAv4 Electronics: What Runs Where</h2>
         <p>
-          The old RUDRA checklist items 9-12 are still important, but each lands in a different
-          place in a ROS 2 robot. The NUC should own ROS 2 topics, transforms, logging, safety
-          gates, and state estimation. The Arduino or Teensy should own tight hardware timing:
-          I2C sensor reads, PS2 receiver polling, PWM/serial timing, and watchdog behavior.
+          RUDRAv4 keeps the robot modular: the NUC is the ROS 2 brain, while the microcontrollers
+          handle pins, timing, encoders, motor-driver serial, and immediate safety behavior. The
+          folders below are engineering references for that design: source material used to write
+          clean ROS 2 firmware and bridge nodes for RUDRAv4.
         </p>
 
-        <div class="grid">
-          <div class="tile">
-            <strong>NUC responsibility</strong>
-            ROS 2 nodes, <code>sensor_msgs/Imu</code>, <code>sensor_msgs/Joy</code>, <code>cmd_vel</code>,
-            odometry fusion, launch files, parameters, logs, and operator visibility.
-          </div>
-          <div class="tile">
-            <strong>Microcontroller responsibility</strong>
-            MPU6050 I2C sampling, PS2 controller polling, Sabertooth serial writes, encoder timing,
-            local failsafe, and a compact serial protocol to the NUC.
-          </div>
+        <h3>Reference folders used to design RUDRAv4</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Folder or file</th>
+              <th>What it teaches us</th>
+              <th>RUDRAv4 implementation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>uno-teensy-ros_AD/</code></td>
+              <td>How the PS2 receiver maps sticks and SELECT/manual mode.</td>
+              <td>UNO publishes joystick state as serial packets or the NUC publishes standard ROS 2 <code>/joy</code>.</td>
+            </tr>
+            <tr>
+              <td><code>v2_base_controler_AE/</code></td>
+              <td>The physical base loop: velocity commands, manual commands, Sabertooth output, encoders, IMU, odometry.</td>
+              <td>Teensy firmware keeps the real-time base loop and exchanges packets with a ROS 2 bridge.</td>
+            </tr>
+            <tr>
+              <td><code>v2_Sabertooth_ROS_cmd_vel/</code></td>
+              <td>Sabertooth addressing, speed mapping, and timeout behavior.</td>
+              <td>Use the same safety ideas in the RUDRAv4 base firmware.</td>
+            </tr>
+            <tr>
+              <td><code>IMU-Teensy/</code> and <code>MPU6050/</code></td>
+              <td>MPU6050 sensor access, scaling, and calibration approach.</td>
+              <td>Publish raw IMU data to ROS 2 as <code>/rudra/imu/raw</code>.</td>
+            </tr>
+            <tr>
+              <td><code>PS2X_lib/</code></td>
+              <td>PS2 wireless controller protocol support.</td>
+              <td>Use only if the PS2 receiver remains wired to Arduino/Teensy.</td>
+            </tr>
+            <tr>
+              <td><code>Sabertooth/</code></td>
+              <td>Packetized serial control of the Sabertooth motor drivers.</td>
+              <td>Teensy commands the Sabertooth drivers; the NUC sends safe high-level velocity commands.</td>
+            </tr>
+            <tr>
+              <td><code>ROS/rudra/</code></td>
+              <td>Topic intent: joystick command, serial devices, robot description, odom, IMU, TF.</td>
+              <td>Create ROS 2 interfaces and launch files that express the same robot responsibilities cleanly.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>RUDRAv4 ROS 2 data flow</h3>
+        <pre><code>PS2 controller
+  -> Arduino UNO or direct Linux joystick input
+  -> rudra_hw_bridge or ROS 2 joy_node
+  -> /joy                 type: sensor_msgs/Joy
+
+NUC teleop / Nav2 / autonomy
+  -> /cmd_vel             type: geometry_msgs/Twist
+
+/joy + /cmd_vel
+  -> rudra_hw_bridge
+  -> CMD packets to Teensy
+  -> Sabertooth address 128, motors 1 and 2 
+  -> Sabertooth address 129, motors 1 and 2 
+  -> wheel encoders
+  -> ODOM packets to NUC
+  -> /rudra/wheel_odom   type: nav_msgs/Odometry
+  -> IMU packets to NUC
+  -> /rudra/imu/raw      type: sensor_msgs/Imu
+  -> /tf                 odom -> base_link</code></pre>
+
+        <h3>Firmware communication choices</h3>
+        <pre><code>Option A: Keep microcontrollers as hardware controllers
+
+PS2 / encoders / MPU6050 / Sabertooth
+  -> Arduino/Teensy firmware with a simple serial protocol
+  -> rudra_hw_bridge ROS 2 node on the NUC
+  -> /joy, /rudra/imu/raw, /rudra/wheel_odom, /cmd_vel_safe
+
+Option B: Make the Teensy a micro-ROS node
+
+PS2 / encoders / MPU6050 / Sabertooth
+  -> micro-ROS firmware
+  -> micro-ROS agent on the NUC
+  -> normal ROS 2 topics directly</code></pre>
+
+        <div class="callout warn">
+          The serial boundary is a first-class RUDRAv4 design decision. The robot should not rely on
+          accidental Arduino print formats. Define packet names, fields, units, rates, timeouts, and
+          failure behavior before connecting those packets to motor output.
         </div>
 
-        <h3>9. ROS IMU tools in ROS 2</h3>
+        <h3>Recommended decision for the first RUDRAv4 bring-up</h3>
         <p>
-          The ROS 1 <code>imu_tools</code> stack exists in ROS 2 and is released for Lyrical. It contains
-          <code>imu_filter_madgwick</code>, <code>imu_complementary_filter</code>, and <code>rviz_imu_plugin</code>.
-          The filters take raw angular velocity and linear acceleration, optionally magnetometer data,
-          and produce an orientation quaternion.
+          Start with <strong>Option A: custom serial bridge</strong>. It is easier to debug on a fresh
+          NUC, keeps firmware simple, and lets RUDRA move one subsystem at a time. After the base is
+          stable, micro-ROS can be evaluated as a cleaner long-term firmware architecture.
         </p>
 
+        <table>
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>Answer for first ROS 2 bring-up</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Should UNO read PS2?</td>
+              <td>Yes, if the PS2 receiver is wired to UNO. It should output defined <code>JOY</code> packets.</td>
+            </tr>
+            <tr>
+              <td>Should Teensy still command Sabertooth?</td>
+              <td>Yes. Keep hard real-time motor, encoder, and timeout behavior on Teensy.</td>
+            </tr>
+            <tr>
+              <td>Where should ROS 2 run?</td>
+              <td>On the NUC. It translates serial packets to ROS 2 topics and ROS 2 commands back to serial packets.</td>
+            </tr>
+            <tr>
+              <td>Where should MPU6050 be read?</td>
+              <td>On Teensy using the existing I2Cdev/MPU6050 library, then publish raw IMU fields to the NUC.</td>
+            </tr>
+            <tr>
+              <td>How should the article images be used?</td>
+              <td>Use them as RUDRAv4 teaching figures: theory, wiring, hardware layout, base integration, and navigation.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>UNO: PS2 controller reader</h3>
+        <p>
+          In RUDRAv4, the UNO can remain a small input controller for the PS2 receiver. The reference
+          sketch configures the receiver with:
+        </p>
+        <pre><code>ps2x.config_gamepad(9, 7, 6, 8, true, true);</code></pre>
+
+        <p>
+          The useful fields are <code>SELECT</code>, <code>Ry</code>, <code>Rx</code>, <code>Ly</code>, and <code>Lx</code>.
+          RUDRAv4 should expose these as standard ROS 2 joystick semantics whenever possible:
+        </p>
+        <pre><code>time head
+bool SELECT
+int32 Ry
+int32 Rx
+int32 Ly
+int32 Lx</code></pre>
+
+        <p>
+          Choose one ROS 2 representation:
+        </p>
+        <ul>
+          <li><code>sensor_msgs/msg/Joy</code> if you want to use standard ROS 2 joystick tooling.</li>
+          <li>A new ROS 2 <code>rudra_interfaces/msg/RudraJoy</code> if the exact RUDRA fields matter.</li>
+          <li>A plain serial line that the NUC converts into <code>/joy</code>.</li>
+        </ul>
+
+        <h3>Recommended UNO serial packet</h3>
+        <pre><code>JOY,stamp_ms,select,lx,ly,rx,ry
+JOY,185020,1,128,221,130,127</code></pre>
+
+        <p>
+          That gives the NUC enough information to publish <code>/joy</code> and preserve the
+          manual-mode toggle from <code>SELECT</code>.
+        </p>
+
+        <h3>Teensy/base controller: Sabertooth, encoders, IMU</h3>
+        <p>
+          The RUDRAv4 base controller has four jobs: receive velocity commands, receive manual
+          joystick commands, read four encoders, and read the MPU6050. It also drives two Sabertooth
+          controllers:
+        </p>
+        <pre><code>Sabertooth STRight(128), STLeft(129);</code></pre>
+
+        <p>
+          Physical constants:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Constant</th>
+              <th>Value</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>radius</code></td>
+              <td><code>0.0675 m</code></td>
+              <td>Wheel radius.</td>
+            </tr>
+            <tr>
+              <td><code>wheelbase</code></td>
+              <td><code>0.29 m</code></td>
+              <td>Distance between left and right wheel contact centers.</td>
+            </tr>
+            <tr>
+              <td><code>encoder_cpr</code></td>
+              <td><code>1683</code></td>
+              <td>Experimental encoder counts per wheel revolution.</td>
+            </tr>
+            <tr>
+              <td><code>LOOPTIME</code></td>
+              <td><code>100 ms</code></td>
+              <td>Base control loop period, approximately 10 Hz.</td>
+            </tr>
+            <tr>
+              <td><code>noCommLoopMax</code></td>
+              <td><code>10</code></td>
+              <td>Stop motors after about one second without commands.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Recommended Teensy command packet from NUC</h3>
+        <pre><code>CMD,stamp_ms,mode,linear_x,angular_z
+CMD,185030,AUTO,0.20,0.00
+CMD,185130,MANUAL,0.00,0.00</code></pre>
+
+        <p>
+          The Teensy should map <code>linear_x</code> and <code>angular_z</code> using the same differential
+          equations already in the sketch:
+        </p>
+        <pre><code>speed_req_left  = linear_x - angular_z * (wheelbase / 2)
+speed_req_right = linear_x + angular_z * (wheelbase / 2)</code></pre>
+
+        <h3>Recommended Teensy telemetry packets to NUC</h3>
+        <pre><code>ODOM,stamp_ms,x,y,theta,vx,vth,left_mps,right_mps
+ODOM,185040,0.125,0.000,0.010,0.201,0.020,0.198,0.204
+
+IMU,stamp_ms,gx,gy,gz,ax,ay,az
+IMU,185041,0.001,-0.002,0.003,0.12,-0.05,9.78
+
+STAT,stamp_ms,manual_mode,no_comm_loops,estop,battery_mv
+STAT,185050,0,0,0,24600</code></pre>
+
+        <p>
+          The NUC-side ROS 2 bridge should publish:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Serial packet</th>
+              <th>ROS 2 topic</th>
+              <th>ROS 2 type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>JOY</code></td>
+              <td><code>/joy</code></td>
+              <td><code>sensor_msgs/msg/Joy</code></td>
+            </tr>
+            <tr>
+              <td><code>IMU</code></td>
+              <td><code>/rudra/imu/raw</code></td>
+              <td><code>sensor_msgs/msg/Imu</code></td>
+            </tr>
+            <tr>
+              <td><code>ODOM</code></td>
+              <td><code>/rudra/wheel_odom</code></td>
+              <td><code>nav_msgs/msg/Odometry</code></td>
+            </tr>
+            <tr>
+              <td><code>STAT</code></td>
+              <td><code>/rudra/base_status</code></td>
+              <td>Custom <code>rudra_interfaces/msg/BaseStatus</code> or diagnostic messages.</td>
+            </tr>
+            <tr>
+              <td>ROS 2 <code>/cmd_vel</code></td>
+              <td>Serial <code>CMD</code> to Teensy</td>
+              <td><code>geometry_msgs/msg/Twist</code> becomes a serial command.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>MPU6050 and ROS 2 IMU tools</h3>
+        <p>
+          The firmware already converts MPU6050 raw values using <code>ACCEL_SCALE</code>,
+          <code>GYRO_SCALE</code>, and <code>G_TO_ACCEL</code>. Keep that conversion on the Teensy or move it
+          to the NUC, but do it in exactly one place. The ROS 2 side should install:
+        </p>
         <pre><code>sudo apt install -y \
   ros-lyrical-imu-tools \
   ros-lyrical-imu-filter-madgwick \
@@ -783,255 +1713,60 @@ dmesg -w</code></pre>
   ros-lyrical-robot-localization</code></pre>
 
         <p>
-          Recommended topic contract for RUDRA:
+          Topic contract:
         </p>
-        <table>
-          <thead>
-            <tr>
-              <th>Topic</th>
-              <th>Type</th>
-              <th>Producer</th>
-              <th>Meaning</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>/rudra/imu/raw</code></td>
-              <td><code>sensor_msgs/msg/Imu</code></td>
-              <td>Serial bridge or micro-ROS agent</td>
-              <td>Raw gyro and accelerometer data. Orientation may be unset.</td>
-            </tr>
-            <tr>
-              <td><code>/rudra/imu/data</code></td>
-              <td><code>sensor_msgs/msg/Imu</code></td>
-              <td><code>imu_filter_madgwick</code> or complementary filter</td>
-              <td>Filtered IMU with orientation quaternion.</td>
-            </tr>
-            <tr>
-              <td><code>/odometry/filtered</code></td>
-              <td><code>nav_msgs/msg/Odometry</code></td>
-              <td><code>robot_localization</code></td>
-              <td>Fused robot state from wheel odom plus IMU.</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h3>Run and inspect the filter</h3>
-        <pre><code>source ~/.bashrc
-ros2 pkg executables imu_filter_madgwick
-ros2 run imu_filter_madgwick imu_filter_madgwick_node \
-  --ros-args \
-  -r imu/data_raw:=/rudra/imu/raw \
-  -r imu/data:=/rudra/imu/data \
-  -p use_mag:=false \
-  -p publish_tf:=false</code></pre>
+        <pre><code>/rudra/imu/raw   sensor_msgs/msg/Imu   from serial bridge
+/rudra/imu/data  sensor_msgs/msg/Imu   from imu_filter_madgwick or complementary filter
+/odometry/filtered nav_msgs/msg/Odometry from robot_localization</code></pre>
 
         <p>
-          In another terminal, verify the message flow:
+          RUDRAv4 should define <code>imu_link</code> fixed relative to <code>base_link</code>. The reference
+          geometry uses <code>xyz="0.05 -0.07 0.0"</code>; verify the physical mounting before freezing
+          this in the ROS 2 description package.
         </p>
-        <pre><code>ros2 topic hz /rudra/imu/raw
-ros2 topic echo /rudra/imu/data --once
-ros2 interface show sensor_msgs/msg/Imu</code></pre>
 
-        <div class="callout">
-          Keep the IMU frame explicit. A good first frame name is <code>imu_link</code>. Mounting direction
-          matters: if the sensor board is rotated relative to <code>base_link</code>, fix that in URDF/static
-          TF or in firmware, not by guessing signs in multiple nodes.
-        </div>
-
-        <h3>IMU calibration checklist</h3>
+        <h3>Sabertooth bring-up</h3>
+        <p>
+          Keep the Sabertooth library on the Teensy side for first bring-up. The ROS 2 NUC should not
+          directly talk to Sabertooth until the base bridge is stable. Use the existing library and
+          address pattern, verify DIP-switch/address setup, and start with all wheels lifted.
+        </p>
         <ul>
-          <li>Measure gyro bias while the robot is perfectly still at boot.</li>
-          <li>Publish SI units: radians per second for gyro, meters per second squared for acceleration.</li>
-          <li>Fill covariance values. If unknown, use conservative non-zero diagonal values rather than pretending perfect certainty.</li>
-          <li>Disable magnetometer fusion unless the physical IMU has a calibrated magnetometer and the robot is not near large current loops.</li>
-          <li>Use <code>rviz_imu_plugin</code> or RViz transforms to visually confirm orientation before driving.</li>
+          <li>Motor command range remains <code>-127</code> to <code>127</code>.</li>
+          <li>Right controller address is <code>128</code>; left controller address is <code>129</code>.</li>
+          <li>Command timeout must stop all four motors.</li>
+          <li>PID integral must reset when the base stops to avoid wind-up.</li>
+          <li>Manual mode must never bypass emergency stop or command timeout.</li>
         </ul>
 
-        <h3>10. Sabertooth 2x12 in ROS 2</h3>
-        <p>
-          Sabertooth is not a ROS package; it is a motor driver. In ROS 2, write a NUC-side motor
-          bridge or a microcontroller firmware bridge that converts safe velocity commands into
-          Sabertooth serial commands. For a differential drive robot, the clean ROS graph is:
-        </p>
-
-        <pre><code>/cmd_vel
-  -> rudra_base_controller
-  -> left/right wheel speed targets
-  -> Sabertooth packet serial or simplified serial
-  -> motors
-  -> encoders
-  -> /rudra/wheel_odom
-  -> robot_localization</code></pre>
-
-        <h3>Sabertooth serial modes</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Mode</th>
-              <th>When to use</th>
-              <th>ROS 2 implication</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Simplified serial</td>
-              <td>One Sabertooth, minimal firmware, single-byte commands.</td>
-              <td>Easy to bring up, but weak addressing and integrity. Good bench test mode.</td>
-            </tr>
-            <tr>
-              <td>Packetized serial</td>
-              <td>Robot use, multiple drivers, better command structure.</td>
-              <td>Preferred RUDRA mode. Use address, command, data, and checksum bytes.</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <p>
-          Packetized serial uses four bytes: address, command, data, and a 7-bit checksum. The
-          checksum formula from the Sabertooth guide is:
-        </p>
-        <pre><code>checksum = (address + command + data) &amp; 0x7f</code></pre>
-
-        <h3>Python packet helper for a ROS 2 bridge</h3>
-        <pre><code>def sabertooth_packet(address: int, command: int, data: int) -&gt; bytes:
-    address &amp;= 0xff
-    command &amp;= 0xff
-    data &amp;= 0xff
-    checksum = (address + command + data) &amp; 0x7f
-    return bytes([address, command, data, checksum])</code></pre>
-
-        <h3>Safety rules for Sabertooth bring-up</h3>
+        <h3>What not to do</h3>
         <ul>
-          <li>Start with wheels off the ground.</li>
-          <li>Use a current-limited supply for early tests if possible.</li>
-          <li>Confirm battery chemistry and lithium cutoff DIP switch settings before robot power tests.</li>
-          <li>Use a hardware emergency stop. In packetized serial mode, Sabertooth S2 can be wired as active-low emergency stop.</li>
-          <li>Make the ROS 2 bridge command zero speed if <code>/cmd_vel</code> times out.</li>
-          <li>Log every raw motor command until the sign convention is proven.</li>
+          <li>Do not use generated <code>rosserial_arduino</code> libraries in the RUDRAv4 workflow.</li>
+          <li>Do not invent custom interfaces unless standard ROS 2 messages cannot express the data cleanly.</li>
+          <li>Do not hard-code <code>/dev/ttyACM0</code> and <code>/dev/ttyACM1</code> long term. Use <code>/dev/serial/by-id</code>.</li>
+          <li>Do not connect <code>/cmd_vel</code> to motor output until timeout, zero command, and e-stop behavior are proven.</li>
         </ul>
 
-        <h3>11. Arduino MPU6050 libraries in a ROS 2 robot</h3>
-        <p>
-          Jeff Rowberg's I2Cdevlib remains useful on Arduino/Teensy firmware. It is not installed as
-          a ROS 2 package; it belongs in the firmware project. The firmware should read the MPU6050,
-          calibrate it, and send either raw IMU data or a DMP quaternion to the NUC.
-        </p>
-
-        <pre><code>mkdir -p ~/Arduino/libraries
-cd ~/Downloads
-git clone https://github.com/jrowberg/i2cdevlib.git
-cp -r i2cdevlib/Arduino/I2Cdev ~/Arduino/libraries/
-cp -r i2cdevlib/Arduino/MPU6050 ~/Arduino/libraries/</code></pre>
-
-        <h3>Firmware-to-ROS message mapping</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>MPU6050 value</th>
-              <th>ROS 2 field</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Gyro x/y/z</td>
-              <td><code>angular_velocity</code></td>
-              <td>Convert to rad/s before publishing.</td>
-            </tr>
-            <tr>
-              <td>Accel x/y/z</td>
-              <td><code>linear_acceleration</code></td>
-              <td>Convert to m/s^2. At rest, magnitude should be close to 9.81.</td>
-            </tr>
-            <tr>
-              <td>DMP quaternion</td>
-              <td><code>orientation</code></td>
-              <td>Use only after confirming frame convention and calibration.</td>
-            </tr>
-            <tr>
-              <td>Temperature</td>
-              <td>Diagnostic topic</td>
-              <td>Useful for drift debugging, not part of <code>sensor_msgs/Imu</code>.</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h3>Serial packet suggestion for IMU</h3>
-        <p>
-          For a custom serial bridge, make the firmware output one complete line per IMU sample.
-          Example CSV shape:
-        </p>
-        <pre><code>IMU,stamp_us,gx,gy,gz,ax,ay,az
-IMU,18300420,0.001,-0.002,0.003,0.12,-0.05,9.78</code></pre>
-
-        <p>
-          The NUC-side ROS 2 Python node reads the line, validates the field count, converts units,
-          fills <code>sensor_msgs/msg/Imu</code>, and publishes <code>/rudra/imu/raw</code>. Keep the parsing
-          strict; malformed sensor packets should increment a diagnostic counter, not silently drive
-          the robot state estimate.
-        </p>
-
-        <h3>12. Arduino UNO PS2 controller in ROS 2</h3>
-        <p>
-          There are two valid ROS 2 paths for PS2-style control. If the controller appears to Linux
-          as a USB joystick, use ROS 2 <code>joy</code> and <code>teleop_twist_joy</code> directly on the NUC or
-          Aghora. If it is a PS2 wireless receiver wired to Arduino pins, read it in firmware with
-          <code>PS2X_lib</code>, then publish equivalent joystick values to ROS 2 through serial.
-        </p>
-
-        <h3>Path A: Linux joystick input</h3>
-        <pre><code>sudo apt install -y ros-lyrical-joy ros-lyrical-joy-linux ros-lyrical-teleop-twist-joy
-source ~/.bashrc
-ros2 run joy joy_enumerate_devices
-ros2 run joy joy_node
-ros2 topic echo /joy</code></pre>
-
-        <p>For direct teleop:</p>
-        <pre><code>ros2 launch teleop_twist_joy teleop-launch.py joy_config:=ps3</code></pre>
-
-        <h3>Path B: PS2 receiver wired to Arduino or Teensy</h3>
-        <pre><code>cd ~/Downloads
-git clone https://github.com/madsci1016/Arduino-PS2X.git
-cp -r Arduino-PS2X/PS2X_lib ~/Arduino/libraries/</code></pre>
-
-        <p>
-          Typical PS2 receiver signals are data, command, attention/select, clock, power, and ground.
-          Keep the receiver logic voltage compatible with the microcontroller. Many wireless PS2
-          receivers are happiest at 3.3 V logic; do not assume a motor-driver board's power pin is a
-          safe logic supply.
-        </p>
-
-        <h3>Recommended PS2 serial packet</h3>
-        <pre><code>JOY,stamp_us,lx,ly,rx,ry,buttons
-JOY,18320100,-0.03,0.91,0.02,-0.01,0x0048</code></pre>
-
-        <p>
-          The NUC-side bridge converts that packet to <code>sensor_msgs/msg/Joy</code>. Then RUDRA can use
-          normal ROS 2 tools such as <code>teleop_twist_joy</code>, record joystick input in rosbag2, and
-          replay controller data during debugging.
-        </p>
-
-        <h3>Bring-up order for the four hardware items</h3>
+        <h3>Bring-up order that will not make your future self suffer</h3>
         <ol>
-          <li>Bring up serial permissions and stable device names under <code>/dev/serial/by-id</code>.</li>
-          <li>Read MPU6050 on firmware and print calibrated raw values to serial.</li>
-          <li>Publish <code>/rudra/imu/raw</code>, then run <code>imu_filter_madgwick</code> and inspect <code>/rudra/imu/data</code>.</li>
-          <li>Read PS2 controller and publish <code>/joy</code> or a serial packet that becomes <code>/joy</code>.</li>
-          <li>Test Sabertooth serial with motors disconnected or wheels lifted.</li>
-          <li>Only after signs, scaling, timeout behavior, and e-stop are verified, connect teleop to motor output.</li>
+          <li>Verify Teensy and UNO appear under <code>/dev/serial/by-id</code>.</li>
+          <li>Flash a minimal UNO sketch that prints <code>JOY</code> packets. Confirm with <code>serial monitor</code> or <code>cat</code>.</li>
+          <li>Flash a minimal Teensy sketch that prints <code>IMU</code> and <code>ODOM</code> packets without driving motors.</li>
+          <li>Write the NUC ROS 2 bridge that turns those packets into <code>/joy</code>, <code>/rudra/imu/raw</code>, and <code>/rudra/wheel_odom</code>.</li>
+          <li>Run IMU filtering and check orientation in RViz.</li>
+          <li>With wheels lifted, allow the bridge to send <code>CMD</code> packets to Teensy.</li>
+          <li>Only after command signs and timeout behavior are correct, test on the floor at low speed.</li>
         </ol>
 
         <div class="callout ok">
-          RUDRA's ROS 2 target architecture should be boring in the best way:
-          <code>/joy</code> and autonomous planners produce <code>/cmd_vel</code>; motor bridge owns safety and
-          Sabertooth commands; IMU and wheel odom feed localization; all hardware can be inspected
-          with standard ROS 2 topics.
+          Clear target: Arduino/Teensy own pins, timing, and Sabertooth safety. The NUC owns ROS 2,
+          logging, transforms, topic names, launch files, and autonomy. The serial protocol is the
+          contract between those two worlds.
         </div>
       </section>
 
       <section id="ssh">
-        <h2>11. SSH and Networking</h2>
+        <h2>12. SSH and Networking</h2>
         <p>
           The control laptop should reach the NUC over SSH, and ROS 2 discovery should stay on the
           robot subnet. Keep the same <code>ROS_DOMAIN_ID</code> on every RUDRA machine.
@@ -1070,7 +1805,7 @@ ros2 topic echo /rudra/heartbeat</code></pre>
       </section>
 
       <section id="optional-services">
-        <h2>12. Optional Boot Services</h2>
+        <h2>13. Optional Boot Services</h2>
         <p>
           During development, run nodes manually in a terminal. Once a node is stable, create a
           user-level systemd service so it starts when the NUC boots.
@@ -1085,7 +1820,7 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/bin/bash -lc 'source /opt/ros/lyrical/setup.bash &amp;&amp; source "$HOME/Projects/RUDRA/RUDRAv3/ros2_ws/install/setup.bash" &amp;&amp; exec ros2 run rudra_core rudra_alive'
+ExecStart=/bin/bash -lc 'source /opt/ros/lyrical/setup.bash &amp;&amp; source "$HOME/Projects/RUDRA/RUDRAv4/ros2_ws/install/setup.bash" &amp;&amp; exec ros2 run rudra_core rudra_alive'
 Restart=on-failure
 RestartSec=2
 
@@ -1108,14 +1843,29 @@ systemctl --user status rudra-alive.service --no-pager</code></pre>
       </section>
 
       <section id="troubleshooting">
-        <h2>13. Troubleshooting</h2>
+        <h2>14. Troubleshooting</h2>
 
         <h3><code>ros2</code> command not found</h3>
         <pre><code>source /opt/ros/lyrical/setup.bash
 echo 'source /opt/ros/lyrical/setup.bash' &gt;&gt; ~/.bashrc</code></pre>
 
         <h3>Workspace package not found</h3>
-        <pre><code>cd ~/Projects/RUDRA/RUDRAv3/ros2_ws
+        <p>
+          If <code>ros2 pkg prefix rudra_core</code> prints <code>Package not found</code>, the current
+          terminal does not have the RUDRA overlay sourced. Source the workspace setup file, or
+          source <code>~/.bashrc</code> after confirming it contains the RUDRA block.
+        </p>
+        <pre><code>source /opt/ros/lyrical/setup.bash
+source ~/Projects/RUDRA/RUDRAv4/ros2_ws/install/setup.bash
+ros2 pkg prefix rudra_core
+ros2 pkg executables rudra_core</code></pre>
+
+        <p>
+          If the package is still missing, rebuild the workspace from a clean ROS environment:
+        </p>
+        <pre><code>cd ~/Projects/RUDRA/RUDRAv4/ros2_ws
+unset COLCON_PREFIX_PATH
+source /opt/ros/lyrical/setup.bash
 colcon build --symlink-install
 source install/setup.bash
 ros2 pkg list | grep rudra_core</code></pre>
@@ -1158,21 +1908,46 @@ ros2 topic list</code></pre>
       </section>
 
       <section id="references">
-        <h2>14. References</h2>
+        <h2>15. References</h2>
         <ul>
-          <li><a href="https://adarsh-gouda.medium.com/rudra-nuc-93e9e726db22">Original RUDRA NUC Setup reference by Adarsh Gouda</a></li>
+          <li><a href="https://adarsh-gouda.medium.com/rudra-nuc-93e9e726db22">Source RUDRA NUC Setup reference by Adarsh Gouda</a></li>
+          <li><a href="https://medium.com/@adarsh-gouda/rudra-8e643e279d95">Source RUDRA system article: Invoking the RUDRA ROS-Unified Differential-drive Remote-mode Autonomous-rover</a></li>
+          <li><a href="https://adarsh-gouda.medium.com/">Adarsh Gouda Medium index with RUDRA articles</a></li>
+          <li><a href="https://lambdalabs.com/lambda-stack-deep-learning-software">Lambda Stack source-article reference</a></li>
+          <li><a href="https://github.com/AdarshGouda/RUDRAv3/tree/main/BOM">RUDRA hardware BOM reference</a></li>
+          <li><a href="https://github.com/JetsonHacksNano/installArduinoIDE">JetsonHacksNano Arduino IDE installer</a></li>
+          <li><a href="https://docs.arduino.cc/software/ide-v1/tutorials/Linux/">Arduino IDE 1 Linux installation source-article reference</a></li>
+          <li><a href="http://wiki.ros.org/noetic/Installation/Ubuntu">ROS Noetic Ubuntu installation source-article reference</a></li>
           <li><a href="https://docs.ros.org/en/lyrical/Installation.html">ROS 2 Lyrical installation overview</a></li>
           <li><a href="https://docs.ros.org/en/lyrical/Installation/Ubuntu-Install-Debs.html">ROS 2 Lyrical Ubuntu deb package installation</a></li>
           <li><a href="https://docs.ros.org/en/lyrical/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html">ROS 2 colcon workspace tutorial</a></li>
           <li><a href="https://docs.ros.org/en/lyrical/Tutorials/Intermediate/Rosdep.html">ROS 2 rosdep dependency tutorial</a></li>
           <li><a href="https://www.pjrc.com/teensy/td_download.html">PJRC Teensyduino download and install</a></li>
+          <li><a href="https://www.pjrc.com/teensy/00-teensy.rules">PJRC Teensy udev rules</a></li>
           <li><a href="https://www.pjrc.com/teensy/loader_linux.html">PJRC Teensy Loader for Linux</a></li>
+          <li><a href="https://www.pjrc.com/teensy/tutorial.html">PJRC Teensy tutorial</a></li>
+          <li><a href="https://www.pjrc.com/teensy/td_libs_Encoder.html">PJRC Encoder Library</a></li>
           <li><a href="https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-downloading-and-installing">Arduino IDE 2 installation guide</a></li>
           <li><a href="https://github.com/micro-ROS/micro_ros_arduino">micro-ROS Arduino library</a></li>
+          <li><a href="http://wiki.ros.org/imu_tools">ROS IMU tools source-article reference</a></li>
           <li><a href="https://index.ros.org/r/imu_tools/">ROS Index: imu_tools for ROS 2</a></li>
+          <li><a href="https://www.dimensionengineering.com/products/sabertooth2x12">Dimension Engineering Sabertooth 2x12 product page</a></li>
           <li><a href="https://www.dimensionengineering.com/datasheets/Sabertooth2x12.pdf">Dimension Engineering Sabertooth 2x12 User's Guide</a></li>
+          <li><a href="https://www.dimensionengineering.com/info/arduino">Dimension Engineering Sabertooth Arduino setup</a></li>
+          <li><a href="https://www.robotshop.com/media/files/pdf2/049-rb-cyt-83.pdf">12V gear motor with encoder spec sheet</a></li>
+          <li><a href="https://handsontec.com/dataspecs/module/L298N%20Motor%20Driver.pdf">L298N motor driver spec sheet</a></li>
+          <li><a href="https://www.mini-box.com/DCDC-USB">mini-box DCDC-USB intelligent DC-DC converter</a></li>
+          <li><a href="https://github.com/XRobots/ReallyUsefulRobot/blob/main/arduino/RUR099/RUR099.ino">XRobots ReallyUsefulRobot RUR099 Arduino reference</a></li>
+          <li><a href="https://github.com/AdarshGouda/RUDRAv3/blob/main/v2_base_controler_AE/v2_base_controler_AE.ino">RUDRA Teensy base controller reference sketch</a></li>
+          <li><a href="https://github.com/AdarshGouda/RUDRAv3/blob/main/uno-teensy-ros_AD/uno-teensy-ros_AD.ino">RUDRA Arduino UNO PS2 reference sketch</a></li>
+          <li><a href="https://github.com/AdarshGouda/RUDRAv3/blob/main/IMU-Teensy/documentation-h-elc-sen-imu-3-ag/MPU6050-BBManual.pdf">RUDRA MPU6050 breakout board manual reference</a></li>
+          <li><a href="https://www.i2cdevlib.com/devices/mpu6050">I2Cdevlib MPU-6050 device reference</a></li>
           <li><a href="https://github.com/jrowberg/i2cdevlib">Jeff Rowberg I2Cdevlib and MPU6050 Arduino libraries</a></li>
+          <li><a href="https://create.arduino.cc/projecthub/electropeak/how-to-interface-ps2-wireless-controller-w-arduino-a0a813">ElectroPeak Arduino UNO PS2 controller source-article reference</a></li>
+          <li><a href="https://www.hackster.io/electropeak/how-to-interface-ps2-wireless-controller-w-arduino-a0a813">ElectroPeak PS2 controller article mirror</a></li>
           <li><a href="https://github.com/madsci1016/Arduino-PS2X">Arduino PS2X library for PlayStation 2 controllers</a></li>
+          <li><a href="http://wiki.ros.org/navigation">Navigation stack source-article reference</a></li>
+          <li><a href="https://www.ros.org/reps/rep-0105.html">REP 105 coordinate frames for mobile platforms</a></li>
           <li><a href="https://index.ros.org/p/joy/">ROS 2 joy package</a></li>
           <li><a href="https://docs.ros.org/en/rolling/p/teleop_twist_joy/index.html">ROS 2 teleop_twist_joy package</a></li>
           <li><a href="https://ubuntu.com/server/docs/service-openssh/">Ubuntu OpenSSH server documentation</a></li>
